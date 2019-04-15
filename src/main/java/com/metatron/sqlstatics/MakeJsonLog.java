@@ -29,7 +29,7 @@ public class MakeJsonLog {
              for(String query : getORACLEQueryList()) {
                  JSONObject log = new JSONObject();
 
-                 log.put("hostname","localhost");
+                 log.put("cluster","localhost");
                  log.put("createTime",System.currentTimeMillis());
                  log.put("sqlId",UUID.randomUUID().toString());
                  log.put("engineType",sqlConfiguration.get("engineType"));

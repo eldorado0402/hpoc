@@ -30,7 +30,7 @@ public class ParseDataRecord implements Serializable {
     public String getsql() {
         return sql;
     }
-    public String getAccessTablec() {
+    public String getSourceTablec() {
         return sourceTable;
     }
     public String getTargetTable() {
@@ -56,8 +56,8 @@ public class ParseDataRecord implements Serializable {
     public void setSql(String sql) {
         this.sql = sql;
     }
-    public void setAccessTable(String accessTable) {
-        this.sourceTable = accessTable;
+    public void setSourceTable(String sourceTable) {
+        this.sourceTable = sourceTable;
     }
     public void setTargetTable(String targetTable) {
         this.targetTable = targetTable;

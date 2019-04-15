@@ -1,5 +1,6 @@
 package com.metatron.sqlstatics;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -17,14 +18,15 @@ import net.sf.jsqlparser.schema.*;
 
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.util.Iterator;
 import net.sf.jsqlparser.statement.merge.*;
 import net.sf.jsqlparser.statement.upsert.*;
 import net.sf.jsqlparser.statement.delete.*;
 import net.sf.jsqlparser.statement.drop.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class QueryParser {
 
@@ -44,55 +46,157 @@ public class QueryParser {
 
     public void getQueryStatics(){
 
+        //read log file
+        BufferedReader br = null;
+        FileWriter writer=null;
+        JSONParser jsonParser = new JSONParser();
+
         //read config
         try {
 
-            MakeJsonLog sample = new MakeJsonLog();
-            ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
+            //TODO : 추후에는 변경 필요
 
-            ArrayList<JSONObject> results =  new ArrayList<JSONObject>();
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            logs = sample.readJsonFile();
+            File inputFile = new File(sqlConfiguration.get("input_filename"));
+            File outputFile= new File(sqlConfiguration.get("output_filename"));
 
-            for(JSONObject log : logs ){
-                //System.out.println(log.get("sqlId"));//test code
+            br = new BufferedReader(new FileReader(inputFile));
+            String line;
+
+            writer = new FileWriter(outputFile,true);
+
+            while ((line = br.readLine()) != null) {
+                    //inputdata
+                JSONObject jsonData = (JSONObject)jsonParser.parse(line);
+
                 QueryParser parser = new QueryParser();
-                String query = log.get("sql").toString();
+                List<String> sourceTables = null;
+                Statement statement;
+                SqlType type;
+                String targetTable;
 
-                Statement statement = CCJSqlParserUtil.parse(query);
-                SqlType type = parser.getSqlType(query,statement);
+                String query = jsonData.get("sql").toString();
 
-                //get source tables
-                JSONObject reslut = new JSONObject();
-                //set sqlID
-                reslut.put("sqlId",log.get("sqlId").toString());
+                // sql 이 없으면 다음 라인 처리
+                if(query == null || query.trim().equals(""))
+                    continue;
 
-                //set type
-                reslut.put("sqlType",type);
+                //sql 이 있으면 처리 시작
+                statement = CCJSqlParserUtil.parse(query);
+                type = parser.getSqlType(query,statement);
+                targetTable = parser.getTargetTable(statement,type);
 
-                //set target table
-                reslut.put("target",parser.getTargetTable(statement,type));
+                //get source table list
+                if( parser.getSourcrTables(statement,type) != null){
+                    sourceTables = parser.getSourcrTables(statement,type);
+                }
 
-                //set source table
-                reslut.put("source",parser.getSourcrTables(statement,type));
 
-                //add result
-                results.add(reslut);
-                //TODO : write log file
+                if( sourceTables != null && sourceTables.size() >= 1){
 
+                    for (String source :  sourceTables  ){
+                        //output data
+                        ParseDataRecord parseData = new ParseDataRecord();
+
+                        //read from log file
+                        parseData.setSql(jsonData.get("sql").toString());
+
+                        if(jsonData.get("engineType") != null)
+                            parseData.setEngineType(jsonData.get("engineType").toString());
+
+                        if(jsonData.get("createTime") != null)
+                            parseData.setCreatedTime((Long)jsonData.get("createTime"));
+
+                        if(jsonData.get("cluster") != null)
+                            parseData.setCluster(jsonData.get("cluster").toString());
+
+                        if(jsonData.get("sqlId") != null)
+                            parseData.setSqlId(jsonData.get("sqlId").toString());
+
+                        //set sql Type
+                        parseData.setSqlType(type.toString());
+                        //set target Table
+                        parseData.setTargetTable(targetTable);
+                        //set source Table
+                        parseData.setSourceTable(source);
+
+                        //write
+                        writeResultToFile(writer, parseData);
+
+                    }
+
+                }else{
+
+                    //output data
+                    ParseDataRecord parseData = new ParseDataRecord();
+
+                    //read from log file
+                    parseData.setSql(jsonData.get("sql").toString());
+
+                    if(jsonData.get("engineType") != null)
+                        parseData.setEngineType(jsonData.get("engineType").toString());
+
+                    if(jsonData.get("createTime") != null)
+                        parseData.setCreatedTime((Long)jsonData.get("createTime"));
+
+                    if(jsonData.get("cluster") != null)
+                        parseData.setCluster(jsonData.get("cluster").toString());
+
+                    if(jsonData.get("sqlId") != null)
+                        parseData.setSqlId(jsonData.get("sqlId").toString());
+
+                    //set sql Type
+                    parseData.setSqlType(type.toString());
+                    //set target Table
+                    parseData.setTargetTable(targetTable);
+                    //set source Table
+                    parseData.setSourceTable(null);
+
+                    //System.out.println(parseData.toString());
+
+                    //write
+                    writeResultToFile(writer, parseData);
+
+                    }
+
+                }
+
+
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+            //System.out.println(e);
+        }
+        finally {
+            try {
+                if(br != null) {
+                    br.close();
+                }
+
+            }catch(IOException e){
+                e.printStackTrace();
             }
 
+            try {
+                if(writer != null) {
+                    writer.close();
+                }
 
-            //print!!!
-            //printResult(results);
-            System.out.println(results.toString());
-
-        }catch(Exception e){
-            System.out.println(e);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
 
-
     }
+
+
+
 
 
 
@@ -215,68 +319,26 @@ public class QueryParser {
     }
 
 
-//    public SqlType getSqlType(String query,Statement stmt){
-//        SqlType type= SqlType.NONE;
-//
-//        //System.out.println("class Name : " + stmt.getClass().getSimpleName());
-//        //TODO: 복잡한 구문의 파싱이 되지 않음
-//        try {
-//            //stmt 파싱이 안되면 구문상에 문제가 있는 것으로 간주하고 lineage를 그릴 필요 없음
-//            if(stmt.getClass().getSimpleName().equals("CreateTable")){
-//                //check create stmt
-//                CreateTable cts = (CreateTable) stmt;
-//                if(query.toUpperCase().contains("SELECT")){
-//                    //check select stmt
-//                    Select select = cts.getSelect();
-//                    type =  SqlType.CREATE_TABLE_AS_SELECT;
-//                }else{
-//                    type =  SqlType.CREATE_TABLE;
-//                }
-//
-//            }else if(stmt.getClass().getSimpleName().equals("CreateView")){
-//                CreateView ctv = (CreateView) stmt;
-//                if(query.toUpperCase().contains("SELECT")){
-//                    //check select stmt
-//                    Select select = ctv.getSelect();
-//                    type =  SqlType.CREATE_VIEW_AS_SELECT;
-//                }else{
-//                    type =  SqlType.CREATE_VIEW;
-//                }
-//
-//            }else if(stmt.getClass().getSimpleName().equals("Insert")){
-//                Insert inst = (Insert) stmt;
-//                if(query.toUpperCase().contains("SELECT")){
-//                    //check select stmt
-//                    Select select = inst.getSelect();
-//                    type =  SqlType.INSERT_AS_SELECT;
-//                }else{
-//                    type =  SqlType.INSERT_VALUE;
-//                }
-//
-//            }else if(stmt.getClass().getSimpleName().equals("Update")){
-//                Update upt = (Update) stmt;
-//                type =  SqlType.UPDATE;
-//
-//            }else if(stmt.getClass().getSimpleName().equals("Select")){
-//                Select select = (Select) stmt;
-//                type =  SqlType.SELECT;
-//
-//            }else{
-//                type =  SqlType.NONE;
-//            }
-//
-//        }catch(Exception e){
-//            type = SqlType.NONE;
-//            System.out.println("sql type parser error : " + e);
-//
-//        }
-//
-//        //System.out.println("sql type : " +  type.toString() + " , sql : " + query);
-//
-//        return type;
-//
-//    }
+    private void writeResultToFile(FileWriter writer,ParseDataRecord parseData){
+        StringBuilder sb = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        
+        try {
+            sb.append(mapper.writer().writeValueAsString(parseData)).append("\n");
 
+            if(sb.length() > 1) {
+                writer.write(sb.toString().substring(0, sb.length() - 1));
+                writer.write("\n");
+                writer.flush();
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
 
