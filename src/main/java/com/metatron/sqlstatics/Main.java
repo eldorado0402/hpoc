@@ -18,14 +18,12 @@ public class Main {
         //read config
         try {
             //SQLConfiguration sqlConfiguration = new SQLConfiguration();
-            //System.out.println(sqlConfiguration.get("dbtype"));
+            //System.out.println(sqlConfiguration.get("engineType"));
             MakeJsonLog sample = new MakeJsonLog();
             //make sample
             //sample.makeSample();
             //read sample
             ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
-//            Map<String,ArrayList<String>> sourceTables = new HashMap<String,ArrayList<String>>();
-//            Map<String,String> targetTable = new HashMap<String,String>();
 
             ArrayList<JSONObject> results =  new ArrayList<JSONObject>();
 
@@ -53,26 +51,15 @@ public class Main {
                 //set source table
                 reslut.put("source",parser.getSourcrTables(statement,type));
 
-                //set select columns
-                reslut.put("selectedColumns",parser.SelectedColumns(statement,type));
-
-
                 //add result
                 results.add(reslut);
-
-
-                //all select list
-                parser.getAllSubSelectList(statement,type);
-
-                //sub select list
-                //parser.getSubSelectLists(statement,type);
 
             }
 
 
             //print!!!
             //printResult(results);
-            //System.out.println(results.toString());
+            System.out.println(results.toString());
 
         }catch(Exception e){
             System.out.println(e);

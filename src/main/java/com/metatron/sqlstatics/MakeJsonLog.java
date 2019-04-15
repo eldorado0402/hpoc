@@ -22,7 +22,7 @@ public class MakeJsonLog {
          try {
              SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-             File file = new File(sqlConfiguration.get("filename"));
+             File file = new File(sqlConfiguration.get("input_filename"));
              writer = new FileWriter(file,true);
 
              //make jsonString
@@ -32,7 +32,7 @@ public class MakeJsonLog {
                  log.put("hostname","localhost");
                  log.put("createTime",System.currentTimeMillis());
                  log.put("sqlId",UUID.randomUUID().toString());
-                 log.put("dbtype",sqlConfiguration.get("dbtype"));
+                 log.put("engineType",sqlConfiguration.get("engineType"));
                  log.put("sql",query);
 
                  writer.write(log.toString());
@@ -56,6 +56,7 @@ public class MakeJsonLog {
          }
     }
 
+    //Input File Read
     public ArrayList<JSONObject> readJsonFile(){
 
         BufferedReader br = null;
@@ -66,14 +67,12 @@ public class MakeJsonLog {
 
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
-            File file = new File(sqlConfiguration.get("filename"));
+            File file = new File(sqlConfiguration.get("input_filename"));
 
             br = new BufferedReader(new FileReader(file));
             String line;
 
             while ((line = br.readLine()) != null) {
-                //list.add(line);
-                //Object obj = jsonParser.parse(line);
                 logs.add((JSONObject)jsonParser.parse(line));
             }
         } catch (FileNotFoundException e) {
