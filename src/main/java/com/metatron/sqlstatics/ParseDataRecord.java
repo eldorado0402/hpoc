@@ -80,4 +80,6 @@ public class ParseDataRecord implements Serializable {
                 '}';
     }
 
+
+
 }

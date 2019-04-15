@@ -22,44 +22,10 @@ public class Main {
             MakeJsonLog sample = new MakeJsonLog();
             //make sample
             //sample.makeSample();
-            //read sample
-            ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
 
-            ArrayList<JSONObject> results =  new ArrayList<JSONObject>();
-
-            logs = sample.readJsonFile();
-
-            for(JSONObject log : logs ){
-                //System.out.println(log.get("sqlId"));//test code
-                QueryParser parser = new QueryParser();
-                String query = log.get("sql").toString();
-
-                Statement statement = CCJSqlParserUtil.parse(query);
-                SqlType type = parser.getSqlType(query,statement);
-
-                //get source tables
-                JSONObject reslut = new JSONObject();
-                //set sqlID
-                reslut.put("sqlId",log.get("sqlId").toString());
-
-                //set type
-                reslut.put("sqlType",type);
-
-                //set target table
-                reslut.put("target",parser.getTargetTable(statement,type));
-
-                //set source table
-                reslut.put("source",parser.getSourcrTables(statement,type));
-
-                //add result
-                results.add(reslut);
-
-            }
-
-
-            //print!!!
-            //printResult(results);
-            System.out.println(results.toString());
+            //get query parsing result -> to result file
+            QueryParser queryParser = new QueryParser();
+            queryParser.getQueryStatics();
 
         }catch(Exception e){
             System.out.println(e);
