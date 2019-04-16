@@ -29,10 +29,9 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class DruidLineageRecordOrcWriter {
-    public static void processOrc(String logPathDir, String orcFilePath, boolean overwrite) throws Exception {
+    public void processOrc(String logPathDir, String orcFilePath, boolean overwrite) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        //TODO : hadoop path check
         Path logPath = new Path(logPathDir);
         Configuration hadoopConf = new Configuration();
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
@@ -85,12 +84,13 @@ public class DruidLineageRecordOrcWriter {
                 }
             }
 
-            DruidLineageRecordOrcWriter writer = new DruidLineageRecordOrcWriter();
+            //DruidLineageRecordOrcWriter writer = new DruidLineageRecordOrcWriter();
 
             if(overwrite && fs.exists(new Path(orcFilePath)))
                 fs.delete(new Path(orcFilePath), true);
 
-            writer.writeOrc(records, orcFilePath);
+            //writer.writeOrc(records, orcFilePath);
+            writeOrc(records, orcFilePath);
         }
     }
 
