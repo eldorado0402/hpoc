@@ -20,7 +20,6 @@ import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.util.*;
-import java.util.Iterator;
 import net.sf.jsqlparser.statement.merge.*;
 import net.sf.jsqlparser.statement.upsert.*;
 import net.sf.jsqlparser.statement.delete.*;
@@ -45,6 +44,8 @@ public class QueryParser {
     }
 
     public void getQueryStatics(){
+
+        //TODO : write를 HDFS 에 해야 함.
 
         //read log file
         BufferedReader br = null;
@@ -322,7 +323,7 @@ public class QueryParser {
     private void writeResultToFile(FileWriter writer,ParseDataRecord parseData){
         StringBuilder sb = new StringBuilder();
         ObjectMapper mapper = new ObjectMapper();
-        
+
         try {
             sb.append(mapper.writer().writeValueAsString(parseData)).append("\n");
 

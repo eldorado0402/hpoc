@@ -30,7 +30,7 @@ public class ParseDataRecord implements Serializable {
     public String getsql() {
         return sql;
     }
-    public String getSourceTablec() {
+    public String getSourceTable() {
         return sourceTable;
     }
     public String getTargetTable() {
