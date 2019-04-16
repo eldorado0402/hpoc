@@ -35,8 +35,8 @@ public class DruidLineageRecordOrcWriter {
         Path logPath = new Path(logPathDir);
         Configuration hadoopConf = new Configuration();
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+//        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
+//        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
 
         FileSystem fs = FileSystem.get(hadoopConf);
 
@@ -99,8 +99,8 @@ public class DruidLineageRecordOrcWriter {
         Configuration conf = new Configuration();
 
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
+//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
 
 
         TypeDescription schema = TypeDescription.fromString("struct<eventtime:bigint,cluster:string,engineType:string," +
@@ -156,8 +156,8 @@ public class DruidLineageRecordOrcWriter {
         Configuration conf = new Configuration();
 
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
+//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
 
         Reader reader = OrcFile.createReader(new Path("/user/hive/warehouse/lineage/sample.orc"),
                 OrcFile.readerOptions(conf));

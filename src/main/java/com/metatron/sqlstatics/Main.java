@@ -56,14 +56,4 @@ public class Main {
 
     }
 
-
-//    private static void printResult(ArrayList<JSONObject> results){
-//
-//        for(JSONObject result : results ){
-//
-//            System.out.println(result.get("selectedColumns"));
-//
-//        }
-//
-//    }
 }
