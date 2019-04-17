@@ -113,7 +113,7 @@ public class DruidLineageRecordOrcWriter {
 
         TypeDescription schema = TypeDescription.fromString("struct<" +
                 "sqlid:string," +
-                "engineType:string," +
+                "enginetype:string," +
                 "cluster:string," +
                 "sqltype:string," +
                 "sourcetablename:string," +
@@ -142,14 +142,14 @@ public class DruidLineageRecordOrcWriter {
         for (ParseDataRecord record : records) {
             row = batch.size++;
 
-            eventTime.vector[row] = record.getCreatedTime();
+            sqlId.setVal(row, toBytes(record.getSqlId()));
+            engineType.setVal(row, toBytes(record.getEngineType()));
             cluster.setVal(row, toBytes(record.getCluster()));
+            sqlType.setVal(row, toBytes(record.getSqlType()));
             sourceTableName.setVal(row, toBytes(record.getSourceTable(), true));
             targetTableName.setVal(row, toBytes(record.getTargetTable(), true));
             sql.setVal(row, toBytes(record.getsql()));
-            sqlId.setVal(row, toBytes(record.getSqlId()));
-            sqlType.setVal(row, toBytes(record.getSqlType()));
-            engineType.setVal(row, toBytes(record.getEngineType()));
+            eventTime.vector[row] = record.getCreatedTime();
 
             if (batch.size == batch.getMaxSize()) {
                 writer.addRowBatch(batch);
