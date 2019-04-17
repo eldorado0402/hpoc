@@ -94,6 +94,7 @@ public class MakeJsonLogSample {
     //Input File Read
     public void makeSampleFromCsvFile() {
         FileWriter writer = null;
+        CSVReader csvReader = null;
 
         try {
 
@@ -103,7 +104,7 @@ public class MakeJsonLogSample {
             writer = new FileWriter(file, true);
 
             List <List <String>> records = new ArrayList <List <String>>();
-            CSVReader csvReader = new CSVReader(new FileReader("/Users/eldorado0402/Downloads/discovery_audit_data.csv"));
+            csvReader = new CSVReader(new FileReader("/Users/eldorado0402/Downloads/discovery_audit_data.csv"));
             String[] values = null;
             while ((values = csvReader.readNext()) != null) {
                 //System.out.println(Arrays.asList(values).get(1));
@@ -124,6 +125,7 @@ public class MakeJsonLogSample {
             }
 
 
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -133,6 +135,14 @@ public class MakeJsonLogSample {
                 }
 
             } catch (IOException e) {
+                System.out.println(e);
+            }
+
+            try{
+                if(csvReader != null){
+                    csvReader.close();
+                }
+            }catch (IOException e) {
                 System.out.println(e);
             }
 

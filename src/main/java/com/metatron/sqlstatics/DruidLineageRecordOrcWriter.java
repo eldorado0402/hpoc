@@ -111,10 +111,15 @@ public class DruidLineageRecordOrcWriter {
 //        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
 
 
-        TypeDescription schema = TypeDescription.fromString("struct<eventtime:bigint,cluster:string,engineType:string," +
+        TypeDescription schema = TypeDescription.fromString("struct<" +
+                "sqlid:string," +
+                "engineType:string," +
+                "cluster:string," +
+                "sqltype:string," +
                 "sourcetablename:string," +
                 "targettablename:string," +
-                "sql:string,sqlid:string,sqltype:string" +
+                "sql:string," +
+                "eventtime:bigint" +
                 ">");
 
         Writer writer = OrcFile.createWriter(new Path(orcFilePath),
@@ -123,15 +128,14 @@ public class DruidLineageRecordOrcWriter {
 
         VectorizedRowBatch batch = schema.createRowBatch();
 
-        LongColumnVector eventTime = (LongColumnVector) batch.cols[0];
-        BytesColumnVector cluster = (BytesColumnVector) batch.cols[1];
-        BytesColumnVector engineType = (BytesColumnVector) batch.cols[2];
-        ;
-        BytesColumnVector sourceTableName = (BytesColumnVector) batch.cols[3];
-        BytesColumnVector targetTableName = (BytesColumnVector) batch.cols[4];
-        BytesColumnVector sql = (BytesColumnVector) batch.cols[5];
-        BytesColumnVector sqlId = (BytesColumnVector) batch.cols[6];
-        BytesColumnVector sqlType = (BytesColumnVector) batch.cols[7];
+        BytesColumnVector sqlId = (BytesColumnVector) batch.cols[0];
+        BytesColumnVector engineType = (BytesColumnVector) batch.cols[1];
+        BytesColumnVector cluster = (BytesColumnVector) batch.cols[2];
+        BytesColumnVector sqlType = (BytesColumnVector) batch.cols[3];
+        BytesColumnVector sourceTableName = (BytesColumnVector) batch.cols[4];
+        BytesColumnVector targetTableName = (BytesColumnVector) batch.cols[5];
+        BytesColumnVector sql = (BytesColumnVector) batch.cols[6];
+        LongColumnVector eventTime = (LongColumnVector) batch.cols[7];
 
         int row;
 

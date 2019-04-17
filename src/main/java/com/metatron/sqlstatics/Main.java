@@ -13,7 +13,8 @@ public class Main {
 
             //get query parsing result -> to result file
             QueryParser queryParser = new QueryParser();
-            queryParser.getQueryStatics();
+            //queryParser.getQueryStatics(); //from Local
+            queryParser.getQueryStaticsFromHdfsFile(); //from HDFS
 
             //TODO: write to hive table (DruidLineageRecordOrcWriter)
 

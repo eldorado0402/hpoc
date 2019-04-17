@@ -1,6 +1,6 @@
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/SQLConfiguration.java
-/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/MakeJsonLog.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/Main.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/QueryParser.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java
