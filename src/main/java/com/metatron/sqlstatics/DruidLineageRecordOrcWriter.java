@@ -2,14 +2,7 @@ package com.metatron.sqlstatics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hadoop.conf.Configuration;
-
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.LocatedFileStatus;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.RemoteIterator;
-
-
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
@@ -29,6 +22,21 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class DruidLineageRecordOrcWriter {
+    public static boolean isGzipped(DataInputStream is) {
+        try {
+            byte[] signature = new byte[2];
+            int nread = is.read(signature); //read the gzip signature
+            return nread == 2 && signature[0] == (byte) 0x1f && signature[1] == (byte) 0x8b;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+
+            //todo : file close
+            Closer.closeSilently(is);
+        }
+    }
+
     public void processOrc(String logPathDir, String orcFilePath, boolean overwrite) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -40,44 +48,44 @@ public class DruidLineageRecordOrcWriter {
 
         FileSystem fs = FileSystem.get(hadoopConf);
 
-        if(!fs.exists(logPath)){
+        if (!fs.exists(logPath)) {
             System.out.println("Lineage log path does not exist");
             System.exit(1);
         }
 
         //LOG PATH 가 디렉터리 일 때만 구현해 놓음
-        if(fs.isDirectory(logPath)){
-            RemoteIterator<LocatedFileStatus> iterator = fs.listFiles(logPath, false);
-            List<ParseDataRecord> records = new ArrayList<ParseDataRecord>();
+        if (fs.isDirectory(logPath)) {
+            RemoteIterator <LocatedFileStatus> iterator = fs.listFiles(logPath, false);
+            List <ParseDataRecord> records = new ArrayList <ParseDataRecord>();
 
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 FileStatus status = iterator.next();
-                if(status.isFile()){
+                if (status.isFile()) {
                     String line;
                     BufferedReader br;
 
                     boolean isGzipped = isGzipped(fs.open(status.getPath()));
-                    if(isGzipped){
+                    if (isGzipped) {
                         br = new BufferedReader(new InputStreamReader(new GZIPInputStream(fs.open(status.getPath()))));
                     } else {
                         br = new BufferedReader(new InputStreamReader(fs.open(status.getPath())));
                     }
 
-                    try{
+                    try {
                         int linenum = 0;
-                        while((line = br.readLine()) != null){
-                            try{
+                        while ((line = br.readLine()) != null) {
+                            try {
                                 linenum++;
                                 ParseDataRecord record = mapper.readValue(line.getBytes(), ParseDataRecord.class);
                                 records.add(record);
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 System.out.println(e.toString());
                                 System.out.println("line number : [" + linenum + "]");
                                 System.out.println(line);
                             }
                         }
-                    }finally {
-                        if(br != null){
+                    } finally {
+                        if (br != null) {
                             br.close();
                         }
                     }
@@ -86,7 +94,7 @@ public class DruidLineageRecordOrcWriter {
 
             //DruidLineageRecordOrcWriter writer = new DruidLineageRecordOrcWriter();
 
-            if(overwrite && fs.exists(new Path(orcFilePath)))
+            if (overwrite && fs.exists(new Path(orcFilePath)))
                 fs.delete(new Path(orcFilePath), true);
 
             //writer.writeOrc(records, orcFilePath);
@@ -94,7 +102,7 @@ public class DruidLineageRecordOrcWriter {
         }
     }
 
-    public void writeOrc(List<ParseDataRecord> records, String orcFilePath) throws Exception {
+    public void writeOrc(List <ParseDataRecord> records, String orcFilePath) throws Exception {
         //ORC 스키마 정의, Hive 내 bdpown.lineage 테이블 스키마 참조
         Configuration conf = new Configuration();
 
@@ -117,7 +125,8 @@ public class DruidLineageRecordOrcWriter {
 
         LongColumnVector eventTime = (LongColumnVector) batch.cols[0];
         BytesColumnVector cluster = (BytesColumnVector) batch.cols[1];
-        BytesColumnVector engineType = (BytesColumnVector) batch.cols[2];;
+        BytesColumnVector engineType = (BytesColumnVector) batch.cols[2];
+        ;
         BytesColumnVector sourceTableName = (BytesColumnVector) batch.cols[3];
         BytesColumnVector targetTableName = (BytesColumnVector) batch.cols[4];
         BytesColumnVector sql = (BytesColumnVector) batch.cols[5];
@@ -126,7 +135,7 @@ public class DruidLineageRecordOrcWriter {
 
         int row;
 
-        for(ParseDataRecord record : records){
+        for (ParseDataRecord record : records) {
             row = batch.size++;
 
             eventTime.vector[row] = record.getCreatedTime();
@@ -169,29 +178,14 @@ public class DruidLineageRecordOrcWriter {
         }
     }
 
-    private byte[] toBytes(String inputData){
-        return (inputData == null)?"".getBytes():inputData.getBytes();
+    private byte[] toBytes(String inputData) {
+        return (inputData == null) ? "".getBytes() : inputData.getBytes();
     }
 
-    private byte[] toBytes(String inputData, boolean toLowerCase){
-        if(toLowerCase){
+    private byte[] toBytes(String inputData, boolean toLowerCase) {
+        if (toLowerCase) {
             return toBytes(inputData == null ? null : inputData.toLowerCase());
         }
         return toBytes(inputData);
-    }
-
-    public static boolean isGzipped(DataInputStream is) {
-        try {
-            byte [] signature = new byte[2];
-            int nread = is.read( signature ); //read the gzip signature
-            return nread == 2 && signature[ 0 ] == (byte) 0x1f && signature[ 1 ] == (byte) 0x8b;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-
-            //todo : file close
-            Closer.closeSilently(is);
-        }
     }
 }

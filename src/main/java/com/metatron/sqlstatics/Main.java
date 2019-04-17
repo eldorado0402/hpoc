@@ -1,26 +1,15 @@
 package com.metatron.sqlstatics;
 
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-import org.json.simple.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.metatron.sqlstatics.QueryParser.SqlType;
-
-
 public class Main {
 
     public static void main(String[] args) {
         //read config
         try {
 
-            MakeJsonLog sample = new MakeJsonLog();
+            MakeJsonLogSample sample = new MakeJsonLogSample();
             //make sample
-            //sample.makeSample();
+//            sample.makeSample();
+//            sample.makeSampleFromCsvFile();
 
             //get query parsing result -> to result file
             QueryParser queryParser = new QueryParser();
@@ -28,29 +17,17 @@ public class Main {
 
             //TODO: write to hive table (DruidLineageRecordOrcWriter)
 
-//            if(args == null || args.length < 2) {
-//                System.out.println("java DruidLineageRecordOrcWriter <lineage-log path> <orc outfile path> [<overwrite>]");
-//                System.exit(1);
-//            }
-
-            //String logPathDir = args[0];
-            //String orcFilePath = args[1];
-            //boolean overwrite = false;
-
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
             String logPathDir = sqlConfiguration.get("log_path");
             String orcFilePath = sqlConfiguration.get("orcFilePath");
-            boolean overwrite = true;
-
-//            if(args.length == 3 && "overwrite".equals(args[2]))
-//                overwrite = true;
+            boolean overwrite = Boolean.parseBoolean(sqlConfiguration.get("overwrite"));
 
             DruidLineageRecordOrcWriter druidLineageRecordOrcWriter = new DruidLineageRecordOrcWriter();
             druidLineageRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite);
 
 
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 

@@ -1,68 +1,67 @@
 package com.metatron.sqlstatics;
 
-import org.json.simple.JSONObject;;
+import au.com.bytecode.opencsv.CSVReader;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import java.io.FileNotFoundException;
-import java.io.BufferedReader;
 
+import java.io.*;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.UUID;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
-public class MakeJsonLog {
+;
+
+public class MakeJsonLogSample {
 
     public void makeSample() {
-        FileWriter writer=null;
+        FileWriter writer = null;
 
-         try {
-             SQLConfiguration sqlConfiguration = new SQLConfiguration();
+        try {
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-             File file = new File(sqlConfiguration.get("input_filename"));
-             writer = new FileWriter(file,true);
+            File file = new File(sqlConfiguration.get("input_filename"));
+            writer = new FileWriter(file, true);
 
-             //make jsonString
-             for(String query : getORACLEQueryList()) {
-                 JSONObject log = new JSONObject();
+            //make jsonString
+            for (String query : getORACLEQueryList()) {
+                JSONObject log = new JSONObject();
 
-                 log.put("cluster","localhost");
-                 log.put("createTime",System.currentTimeMillis());
-                 log.put("sqlId",UUID.randomUUID().toString());
-                 log.put("engineType",sqlConfiguration.get("engineType"));
-                 log.put("sql",query);
+                log.put("cluster", "localhost");
+                log.put("createTime", System.currentTimeMillis());
+                log.put("sqlId", UUID.randomUUID().toString());
+                log.put("engineType", sqlConfiguration.get("engineType"));
+                log.put("sql", query);
 
-                 writer.write(log.toString());
-                 writer.write("\n");
+                writer.write(log.toString());
+                writer.write("\n");
 
-                 writer.flush();
+                writer.flush();
 
-             }
+            }
 
-         }catch(Exception e){
+        } catch (Exception e) {
 
-         }finally {
-             try {
-                 if(writer != null) {
-                     writer.close();
-                 }
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
 
-             }catch(IOException e){
-                 System.out.println(e);
-             }
-         }
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
     }
 
     //Input File Read
-    public ArrayList<JSONObject> readJsonFile(){
+    public ArrayList <JSONObject> readJsonFile() {
 
         BufferedReader br = null;
 
-        List<String> list = new ArrayList<String>();
-        ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
+        List <String> list = new ArrayList <String>();
+        ArrayList <JSONObject> logs = new ArrayList <JSONObject>();
         JSONParser jsonParser = new JSONParser();
 
         try {
@@ -73,44 +72,75 @@ public class MakeJsonLog {
             String line;
 
             while ((line = br.readLine()) != null) {
-                logs.add((JSONObject)jsonParser.parse(line));
+                logs.add((JSONObject) jsonParser.parse(line));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }catch (ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
+        } finally {
+            if (br != null) try {
+                br.close();
+            } catch (IOException e) {
+            }
         }
-        finally {
-            if(br != null) try {br.close(); } catch (IOException e) {}
-        }
-//        try (FileReader reader = new FileReader(file))
-//        {
-//            //Read JSON file
-//            Object obj = jsonParser.parse(reader);
-//
-//            JSONArray employeeList = (JSONArray) obj;
-//            System.out.println(employeeList);
-//
-//            //Iterate over employee array
-//            employeeList.forEach( emp -> parseEmployeeObject( (JSONObject) emp ) );
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-
 
         return logs;
     }
 
 
-    private  ArrayList<String> getORACLEQueryList() {
+    //Input File Read
+    public void makeSampleFromCsvFile() {
+        FileWriter writer = null;
+
+        try {
+
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            File file = new File(sqlConfiguration.get("input_filename"));
+            writer = new FileWriter(file, true);
+
+            List <List <String>> records = new ArrayList <List <String>>();
+            CSVReader csvReader = new CSVReader(new FileReader("/Users/eldorado0402/Downloads/discovery_audit_data.csv"));
+            String[] values = null;
+            while ((values = csvReader.readNext()) != null) {
+                //System.out.println(Arrays.asList(values).get(1));
+
+                JSONObject log = new JSONObject();
+
+                log.put("cluster", Arrays.asList(values).get(4));
+                log.put("createTime", System.currentTimeMillis());
+                log.put("sqlId", Arrays.asList(values).get(1));
+                log.put("engineType", Arrays.asList(values).get(0));
+                log.put("sql", Arrays.asList(values).get(2));
+
+                writer.write(log.toString());
+                writer.write("\n");
+
+                writer.flush();
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
+        }
+    }
+
+
+    private ArrayList <String> getORACLEQueryList() {
         ArrayList <String> queryList = new ArrayList <String>();
 
         String sql1 = "Select 1 from sk_wip_hst_r2r   Where lot_id = :v_lotid     and   msg_id = :v_msg_id";
@@ -127,7 +157,7 @@ public class MakeJsonLog {
                 ",RESOURCE_TYPE,PORT_ID,BATCH_ID,BATCH_ZONE,BOAT_ZONE,BOAT_SLOT_ID,BOAT_LOCATION,CREATE_BY,CREATE_DTTS)" +
                 " values (:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13,:14,:15,:16,:17,:18,:19,:20,:21,:22,:23,:24,:25,:26,:27,:28,:29,SYSTIMESTAMP)";
 
-        String sql5 ="SELECT * FROM (" +
+        String sql5 = "SELECT * FROM (" +
                 "SELECT BASE_PRODUCT_ID,BASE_PROCESS_ID,BASE_OPERATION_ID,BASE_EQP_ID,BASE_RECIPE_ID " +
                 "FROM SK_REF_MAP_MST_R2R A,         AREA_MST_PP B,EQP_MST_PP C" +
                 " WHERE     A.LINE = :LINE AND A.AREA_RAWID = B.RAWID  AND A.SUB_EQP_RAWID = C.RAWID AND A.SUB_PRODUCT_ID IN ('*', :PRODUCT) " +
@@ -138,8 +168,7 @@ public class MakeJsonLog {
         String sql6 = "Select 1 from lot_hst_r2r   Where lot_id = :v_lotid     and   eqp_id = :v_eqp_id    and   operation_id = :v_step_id   and   line= :v_fromFab";
         String sql7 = "/* R2RTransportExecuterNew.java-isExistWipData-20180524 */  SELECT 1 FROM SK_WIP_HST_R2R" +
                 "  WHERE LOT_ID = :V_LOT_ID  AND EVENT_NAME = :V_EVENT_NAME  AND EVENT_DTTS = :V_EVENT_DTTS";
-        String sql8 = "/* APCAPP_BISTel.PeakPerformance.R2R.Custom.API.Common.Def_20180109_01 */ SELECT  /*+ NO_MERGE(RMS_RECIPE_MST_VW.EVR)  */           PPID                                        FROM RMS_RECIPE_MST_VW                           WHERE RM_MODEL IN (:EQP_ID, 'MODEL')                AND CHAMBER_ID = :CHAMBER_ID           AND RECIPE_ID = :RECIPE_ID             AND PPID = :PROCESS_RECIPEID"
-                ;
+        String sql8 = "/* APCAPP_BISTel.PeakPerformance.R2R.Custom.API.Common.Def_20180109_01 */ SELECT  /*+ NO_MERGE(RMS_RECIPE_MST_VW.EVR)  */           PPID                                        FROM RMS_RECIPE_MST_VW                           WHERE RM_MODEL IN (:EQP_ID, 'MODEL')                AND CHAMBER_ID = :CHAMBER_ID           AND RECIPE_ID = :RECIPE_ID             AND PPID = :PROCESS_RECIPEID";
         String sql9 = "SELECT LINE,                   LOT_ID,                  CARRIER_ID,              QTY,                     LOT_START_DTTS,          LOT_END_DTTS,            WF_ID,                   SLOT_ID,                 WAFER_START_DTTS,        WAFER_END_dTTS,          PRODUCT_ID,              PROCESS_ID,              OPERATION_ID,            EQP_ID,                  RECIPE_ID,               RETICLE_ID,              MODULE_NAME,             MODULE_ID,               EQP_RECIPE_ID,           EQP_PPID,                RESOURCE_TYPE,           PORT_ID,                 BATCH_ID,                BATCH_ZONE,              BOAT_ZONE,               BOAT_SLOT_ID,            BOAT_LOCATION,           LAST_UPDATE_BY,          LAST_UPDATE_DTTS,        CREATE_BY,               CREATE_DTTS         FROM SK_WAFER_HST_R2R   WHERE LOT_ID = :LOT_ID    AND CARRIER_ID = :CARRIER_ID  AND PROCESS_ID = :PROCESS_ID  AND PRODUCT_ID = :PRODUCT_ID  AND OPERATION_ID = :OPERATION_ID  AND EQP_ID = :EQP_ID        AND LINE = :LINE";
         String sql10 = "SELECT E.EQP_TYPE_CD, EQ.EQP_ID, X.ITEM_NAME, X.ITEM_VALUE    FROM EQP_STATE_TRX_R2R E    INNER JOIN EQP_STATE_EXT_TRX_R2R X ON E.RAWID = X.EQP_STATE_RAWID   INNER JOIN EQP_MST_PP EQ ON EQ.RAWID = E.EQP_RAWID   WHERE E.START_CHNAGE_DTTS <= :v_time     AND E.END_CHANGE_DTTS >= :v_time1     AND E.STATE_TYPE_CD = :v_statetype  ORDER BY E.EQP_TYPE_CD, EQ.EQP_ID, X.ITEM_NAME";
         String sql11 = "SELECT /*+ OPT_PARAM('_B_TREE_BITMAP_PLANS','FALSE') \"APCAPP_ETCH_NORMAL_MODEL_20170718\" */                                LOT_ID AS PLASMA_LOT                                                                                                   , INPUT_NAME AS PLASMA_PARAM                                                                                            , INPUT_VALUE AS PLASMA_VALUE                                                                                           , ROUND (AVG (INPUT_VALUE) OVER (PARTITION BY INPUT_NAME), 2) AS INPUT_VALUE                                         FROM (  SELECT ROW_NUMBER () OVER (ORDER BY LOT.TRACK_IN_DTTS DESC) SK                                                               , LOT.LOT_ID AS LOT_ID                                                                                                  , INPUT.INPUT_NAME AS INPUT_NAME                                                                                        , ROUND (AVG (TO_NUMBER (INPUT.INPUT_VALUE)), 2) AS INPUT_VALUE                                                      FROM (SELECT /*+ INDEX(LOT IDX_LOT_HST_R2R_02) */                                                                                   RAWID                                                                                                                  , LOT_ID                                                                                                                , TRACK_IN_DTTS                                                                                                      FROM LOT_HST_R2R                                                                                                       WHERE EQP_ID = :V_EQID                                                                                                    AND CREATE_DTTS BETWEEN SYSDATE - 1 AND SYSDATE                                                                         AND ( (SYSDATE - 1 > TO_TIMESTAMP (:V_RESETTIME1, 'YYYYMMDD HH24MISS.FF')                                                  AND TRACK_IN_DTTS > SYSDATE - 1)                                                                                       OR (SYSDATE - 1 < TO_TIMESTAMP (:V_RESETTIME2, 'YYYYMMDD HH24MISS.FF')                                                  AND TRACK_IN_DTTS > TO_TIMESTAMP (:V_RESETTIME3, 'YYYYMMDD HH24MISS.FF')))) LOT                                   JOIN INPUT_HST_R2R INPUT                                                                                                    ON (LOT.RAWID = INPUT.LOT_HST_RAWID                                                                                     AND INPUT.SUBSTRATE_ID <> '-'                                                                                           AND INPUT.INPUT_NAME = REPLACE (:V_INPUT1, REGEXP_SUBSTR (:V_INPUT2, '[^/]*$'), 'Plasma_On_Time')                       AND INPUT.CREATE_DTTS BETWEEN SYSDATE - 1 AND SYSDATE)                                                     GROUP BY LOT.LOT_ID                                                                                                            , LOT.TRACK_IN_DTTS                                                                                                     , INPUT.INPUT_NAME)                                                                                       WHERE SK < 6";
@@ -171,7 +200,7 @@ public class MakeJsonLog {
                 "  GROUP BY INQ_EXT.ITEM_VALUE) A, SK_PARAM_SPEC_RECIPE_R2R B WHERE B.EQP_ID = A.EQP_ID" +
                 "  AND B.PROCESS_ID = A.PROCESS_ID AND B.OPERATION_ID = A.OPERATION_ID AND B.RECIPE_ID = A.RECIPE_ID" +
                 "  AND B.CONTROL_PARAM_NAME = A.RECIPE_PARA AND B.USE_FLAG = 'Y') C " +
-                "  ,SK_PARAM_SPEC_RECIPE_EXT_R2R D WHERE D.PARAM_SPEC_RECIPE_RAWID(+) = C.RAWID AND D.STATE_KEY(+) = C.STATE_KEY" ;
+                "  ,SK_PARAM_SPEC_RECIPE_EXT_R2R D WHERE D.PARAM_SPEC_RECIPE_RAWID(+) = C.RAWID AND D.STATE_KEY(+) = C.STATE_KEY";
         //"FFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\uFFFFÿ";
         String sql14 = "SELECT  HST.STATE_RAWID, HST.RAWID, HST.LOT_ID, TO_CHAR(HST.PROCESS_DTTS, 'YYYYMMDD HH24MISS.FF3') AS PROCESS_DTTS, HST.STATE_HST_VALUE, HST.LOT_TYPE_CD, HST.LOT_HST_RAWID, TRX.STATE_KEY_VALUE  FROM STATE_TRX_R2R TRX  INNER JOIN FEEDBACK_STATE_TRX_R2R HST  ON TRX.RAWID = HST.STATE_RAWID    AND TRX.MODEL_NAME = :V_MODELNAME    AND TRX.ACTION_MODE_CD = :V_ACTION_MODE_CD    AND TRX.STATE_TYPE_CD = :V_STATE_TYPE_CD    AND NOT EXISTS ( SELECT EXL.LOT_ID FROM SK_EXCLUDE_WF_TRX_R2R EXL, LOT_HST_R2R LOT , AREA_MST_PP AMP WHERE        EXL.LOT_ID = LOT.LOT_ID AND LOT.RAWID = HST.LOT_HST_RAWID AND NVL(EXL.WF_ID, HST.LOT_ID) = HST.LOT_ID    AND EXL.ACTIVE_YN = :ACTIVE_YN1 AND EXL.FEEDBACK_YN = :FEEDBACK_YN1 AND EXL.OPERATION_ID = LOT.OPERATION_ID AND NVL (EXL.LAST_UPDATE_DTTS, EXL.CREATE_DTTS) BETWEEN SYSDATE - :EXCLUDE_TIME AND SYSDATE    AND AMP.RAWID = EXL.AREA_RAWID AND AMP.AREA = LOT.AREA AND LOT.CREATE_DTTS <= HST.CREATE_DTTS )    AND HST.LOT_TYPE_CD = :V_LOT_TYPE_CD  AND HST.PROCESS_DTTS > TO_TIMESTAMP(:V_TRACK_IN_TIME, 'YYYYMMDD HH24MISS.FF3')  AND HST.LOT_TYPE_CD = :V_LOT_TYPE  AND (  TRX.STATE_KEY_VALUE = :V_KEY0 )  ORDER BY HST.PROCESS_DTTS DESC, HST.LOT_ID";
         String sql15 = "SELECT DISTINCT LOT_ID                  FROM MES_LOTMOVE_VW l, MES_OPERATION_VW s   WHERE     l.TIMEKEY >= :v_fromtime                AND l.TIMEKEY < :v_totime                   AND l.FAC_ID = :fromFab                      AND L.MOVE_FAC_ID = :toFab1                  AND L.OPER_ID = S.OPERATION_ID               AND S.LINE = :toFab2";
@@ -246,7 +275,6 @@ public class MakeJsonLog {
         queryList.add(sql21);
 
         queryList.add(sql30);
-
 
 
         return queryList;
