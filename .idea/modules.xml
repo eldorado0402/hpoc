@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/oracle_lineage2.iml" filepath="$PROJECT_DIR$/oracle_lineage2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/query_statics.iml" filepath="$PROJECT_DIR$/query_statics.iml" />
     </modules>
   </component>
 </project>

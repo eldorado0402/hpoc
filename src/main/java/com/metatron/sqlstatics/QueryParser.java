@@ -234,7 +234,7 @@ public class QueryParser {
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    System.out.println(e + ", query :" + query);
                     continue;
                 }
 
