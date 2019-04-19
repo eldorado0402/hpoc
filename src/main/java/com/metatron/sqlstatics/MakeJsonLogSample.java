@@ -1,6 +1,7 @@
 package com.metatron.sqlstatics;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -11,9 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-;
 
 public class MakeJsonLogSample {
+
+    static final Logger logger = Logger.getLogger(MakeJsonLogSample.class);
 
     public void makeSample() {
         FileWriter writer = null;
@@ -50,7 +52,7 @@ public class MakeJsonLogSample {
                 }
 
             } catch (IOException e) {
-                System.out.println(e);
+               logger.info(e);
             }
         }
     }
@@ -135,7 +137,7 @@ public class MakeJsonLogSample {
                 }
 
             } catch (IOException e) {
-                System.out.println(e);
+               logger.info(e);
             }
 
             try{
@@ -143,7 +145,7 @@ public class MakeJsonLogSample {
                     csvReader.close();
                 }
             }catch (IOException e) {
-                System.out.println(e);
+               logger.info(e);
             }
 
         }

@@ -15,6 +15,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,6 +24,8 @@ import java.io.*;
 import java.util.List;
 
 public class QueryParser {
+
+    static final Logger logger = Logger.getLogger(QueryParser.class);
 
     public void getQueryStatics() {
 
@@ -66,7 +69,7 @@ public class QueryParser {
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    logger.info(e);
                     continue;
                 }
 
@@ -139,7 +142,7 @@ public class QueryParser {
                     //set source Table
                     parseData.setSourceTable(null);
 
-                    //System.out.println(parseData.toString());
+                    //logger.info(parseData.toString());
 
                     //write
                     writeResultToFile(writer, parseData);
@@ -157,7 +160,7 @@ public class QueryParser {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-            //System.out.println(e);
+            //logger.info(e);
         } finally {
             try {
                 if (br != null) {
@@ -234,7 +237,7 @@ public class QueryParser {
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                 } catch (Exception e) {
-                    System.out.println(e + ", query :" + query);
+                    logger.info(e + ", query :" + query);
                     continue;
                 }
 
@@ -307,7 +310,7 @@ public class QueryParser {
                     //set source Table
                     parseData.setSourceTable(null);
 
-                    //System.out.println(parseData.toString());
+                    //logger.info(parseData.toString());
 
                     //write
                     writeResultToHdfsFile(writer, parseData);
@@ -325,7 +328,7 @@ public class QueryParser {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-            //System.out.println(e);
+            //logger.info(e);
         } finally {
             try {
                 if (br != null) {

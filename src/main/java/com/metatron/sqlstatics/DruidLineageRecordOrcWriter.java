@@ -10,6 +10,7 @@ import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.RecordReader;
 import org.apache.hadoop.hive.ql.io.orc.Writer;
+import org.apache.log4j.Logger;
 import org.apache.logging.log4j.core.util.Closer;
 import org.apache.orc.TypeDescription;
 
@@ -21,7 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+
 public class DruidLineageRecordOrcWriter {
+
+    static final Logger logger = Logger.getLogger(DruidLineageRecordOrcWriter.class);
+
     public static boolean isGzipped(DataInputStream is) {
         try {
             byte[] signature = new byte[2];
@@ -49,7 +54,7 @@ public class DruidLineageRecordOrcWriter {
         FileSystem fs = FileSystem.get(hadoopConf);
 
         if (!fs.exists(logPath)) {
-            System.out.println("Lineage log path does not exist");
+           logger.info("Lineage log path does not exist");
             System.exit(1);
         }
 
@@ -79,9 +84,9 @@ public class DruidLineageRecordOrcWriter {
                                 ParseDataRecord record = mapper.readValue(line.getBytes(), ParseDataRecord.class);
                                 records.add(record);
                             } catch (Exception e) {
-                                System.out.println(e.toString());
-                                System.out.println("line number : [" + linenum + "]");
-                                System.out.println(line);
+                               logger.info(e.toString());
+                               logger.info("line number : [" + linenum + "]");
+                               logger.info(line);
                             }
                         }
                     } finally {
@@ -178,7 +183,7 @@ public class DruidLineageRecordOrcWriter {
 
         VectorizedRowBatch batch1 = reader.getSchema().createRowBatch();
         while (rows.nextBatch(batch1)) {
-            System.out.println(batch1);
+           logger.info(batch1);
         }
     }
 

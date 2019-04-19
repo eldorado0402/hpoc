@@ -1,8 +1,13 @@
 package com.metatron.sqlstatics;
 
+import org.apache.log4j.Logger;
+
 public class Main {
 
+    static final Logger logger = Logger.getLogger(Main.class);
+
     public static void main(String[] args) {
+
         //read config
         try {
 
@@ -29,7 +34,8 @@ public class Main {
 
 
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
+            logger.error(e);
         }
 
     }
