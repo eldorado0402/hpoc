@@ -15,17 +15,19 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.io.*;
 import java.util.List;
 
 public class QueryParser {
 
-    static final Logger logger = Logger.getLogger(QueryParser.class);
+    Logger logger = LoggerFactory.getLogger(QueryParser.class);
 
     public void getQueryStatics() {
 
@@ -69,7 +71,7 @@ public class QueryParser {
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                 } catch (Exception e) {
-                    logger.info(e);
+                    logger.info(e.getMessage());
                     continue;
                 }
 
@@ -199,9 +201,12 @@ public class QueryParser {
 
             Configuration conf = new Configuration();
 
-            //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-//            conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-//            conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+
+            conf.addResource(new Path(coreSitePath));
+            conf.addResource(new Path(hdfsSitePathe));
+
 
             Path inputFile = new Path(sqlConfiguration.get("hdfs_input_filename"));
             Path outputFile = new Path(sqlConfiguration.get("hdfs_output_filename"));
@@ -213,6 +218,11 @@ public class QueryParser {
             String line;
 
             //output file
+            if(fs.exists(outputFile)){
+                fs.delete(outputFile,true);
+                logger.info("delete previous parser file path in : " + outputFile);
+            }
+
             fsDataOutputStream = fs.create(outputFile);
             writer = new PrintWriter(fsDataOutputStream);
 
@@ -237,7 +247,7 @@ public class QueryParser {
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                 } catch (Exception e) {
-                    logger.info(e + ", query :" + query);
+                    logger.error(e + ", query :" + query);
                     continue;
                 }
 

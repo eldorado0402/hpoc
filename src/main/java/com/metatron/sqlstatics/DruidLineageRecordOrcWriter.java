@@ -10,7 +10,6 @@ import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
 import org.apache.hadoop.hive.ql.io.orc.RecordReader;
 import org.apache.hadoop.hive.ql.io.orc.Writer;
-import org.apache.log4j.Logger;
 import org.apache.logging.log4j.core.util.Closer;
 import org.apache.orc.TypeDescription;
 
@@ -22,10 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class DruidLineageRecordOrcWriter {
 
-    static final Logger logger = Logger.getLogger(DruidLineageRecordOrcWriter.class);
+    Logger logger = LoggerFactory.getLogger(DruidLineageRecordOrcWriter.class);
 
     public static boolean isGzipped(DataInputStream is) {
         try {
@@ -38,6 +40,7 @@ public class DruidLineageRecordOrcWriter {
         } finally {
 
             //todo : file close
+
             Closer.closeSilently(is);
         }
     }
@@ -48,8 +51,21 @@ public class DruidLineageRecordOrcWriter {
         Path logPath = new Path(logPathDir);
         Configuration hadoopConf = new Configuration();
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-//        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-//        hadoopConf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+
+        try {
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+
+            hadoopConf.addResource(new Path(coreSitePath));
+            hadoopConf.addResource(new Path(hdfsSitePathe));
+
+        }catch(Exception e){
+            logger.info(e.getMessage());
+
+        }
+
 
         FileSystem fs = FileSystem.get(hadoopConf);
 
@@ -112,8 +128,19 @@ public class DruidLineageRecordOrcWriter {
         Configuration conf = new Configuration();
 
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+        try {
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+
+            conf.addResource(new Path(coreSitePath));
+            conf.addResource(new Path(hdfsSitePathe));
+
+        }catch(Exception e){
+            logger.info(e.getMessage());
+
+        }
 
 
         TypeDescription schema = TypeDescription.fromString("struct<" +
@@ -174,8 +201,19 @@ public class DruidLineageRecordOrcWriter {
         Configuration conf = new Configuration();
 
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
-//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/core-site.xml"));
-//        conf.addResource(new Path("/usr/local/Cellar/hadoop/2.7.3/libexec/etc/hadoop/hdfs-site.xml"));
+        try {
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+
+            conf.addResource(new Path(coreSitePath));
+            conf.addResource(new Path(hdfsSitePathe));
+
+        }catch(Exception e){
+            logger.info(e.getMessage());
+
+        }
 
         Reader reader = OrcFile.createReader(new Path("/user/hive/warehouse/lineage/sample.orc"),
                 OrcFile.readerOptions(conf));
@@ -183,7 +221,7 @@ public class DruidLineageRecordOrcWriter {
 
         VectorizedRowBatch batch1 = reader.getSchema().createRowBatch();
         while (rows.nextBatch(batch1)) {
-           logger.info(batch1);
+           logger.info(batch1.toString());
         }
     }
 

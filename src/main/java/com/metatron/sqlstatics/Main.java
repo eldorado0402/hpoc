@@ -1,10 +1,11 @@
 package com.metatron.sqlstatics;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    static final Logger logger = Logger.getLogger(Main.class);
+    static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
 
@@ -35,7 +36,7 @@ public class Main {
 
         } catch (Exception e) {
             //System.out.println(e);
-            logger.error(e);
+            logger.error(e.getMessage());
         }
 
     }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="WARN">
     <appenders>
+        <!--
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
+        -->
 
         <RollingFile name="file" fileName="./logs/statics.log" filePattern="./logs/statics.%i.%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
@@ -18,21 +20,26 @@
 
         <!-- 모든 로그는 dubug레벨 이상일때만 찍고 -->
         <root level="debug" additivity="false" >
-            <appender-ref ref="console" />
+           <!-- <appender-ref ref="console" /> -->
             <appender-ref ref="file" />
         </root>
 
         <!-- 로그많이 찍어대는 요놈들은 warn수준이상만 찍겠다. -->
 
         <logger name="org.springframework" level="warn" additivity="false" >
-            <appender-ref ref="console" />
+            <!--  <appender-ref ref="console" /> -->
+             <appender-ref ref="file" />
+         </logger>
+
+         <logger name="org.apache.http" level="warn" additivity="false" >
+             <!-- <appender-ref ref="console" /> -->
+             <appender-ref ref="file" />
+         </logger>
+
+        <logger name="org.apache.http" level="info" additivity="false" >
+            <!-- <appender-ref ref="console" /> -->
             <appender-ref ref="file" />
         </logger>
 
-        <logger name="org.apache.http" level="warn" additivity="false" >
-            <appender-ref ref="console" />
-            <appender-ref ref="file" />
-        </logger>
-
-    </loggers>
-</configuration>
+     </loggers>
+ </configuration>
