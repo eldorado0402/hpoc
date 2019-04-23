@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class MakeJsonLogSample {
 
-    Logger logger = LoggerFactory.getLogger(MakeJsonLogSample.class);
+    private static final Logger logger = LoggerFactory.getLogger(MakeJsonLogSample.class);
 
     public void makeSample() {
         FileWriter writer = null;

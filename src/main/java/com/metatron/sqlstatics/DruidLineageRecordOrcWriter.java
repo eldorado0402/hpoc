@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class DruidLineageRecordOrcWriter {
 
-    Logger logger = LoggerFactory.getLogger(DruidLineageRecordOrcWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DruidLineageRecordOrcWriter.class);
 
     public static boolean isGzipped(DataInputStream is) {
         try {

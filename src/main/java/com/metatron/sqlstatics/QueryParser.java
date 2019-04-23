@@ -27,7 +27,7 @@ import java.util.List;
 
 public class QueryParser {
 
-    Logger logger = LoggerFactory.getLogger(QueryParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(QueryParser.class);
 
     public void getQueryStatics() {
 
