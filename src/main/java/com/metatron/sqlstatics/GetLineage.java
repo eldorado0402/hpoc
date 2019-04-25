@@ -55,6 +55,8 @@ public class GetLineage {
         Statement statement;
         QueryParser parser = new QueryParser();
 
+        //TODO : where 절도 파싱해야 하나?
+
         try {
             statement = CCJSqlParserUtil.parse(sql);
             if (parser.getSqlType(sql, statement) == QueryParser.SqlType.SELECT) {
@@ -78,8 +80,6 @@ public class GetLineage {
                     HashMap <String, String> sources = tablesInfoFinder.getTableInfoList(CCJSqlParserUtil.parse(selectList.toString()));
                     //from table, join table
                     //TODO: from 절에 있는 테이블의 alias를 가지고 와야 함
-
-                    // LineageInfo lineageinfo = new LineageInfo();
 
                     for (SelectItem selectItem : list) {
 
@@ -110,17 +110,13 @@ public class GetLineage {
 
                                     if (selectList.getFromItem() != null) {
                                         //TODO: from 절에 있는 테이블 정보만 빼올 수 있는 방법?!... from 에 테이블이 있는 경우와 없는 경우가 있음
-                                        try { //selectList.getFromItem() 이 table 이 아닐때를 위해서.. ( 다른 방법은 없나 확인 필요)
-                                            if (((Table) selectList.getFromItem()) != null) {
-                                                //from 테이블의 meta를 추가함
-                                                String table = ((Table) selectList.getFromItem()).getName();
-                                                ArrayList <String> cols = getKey(metadatas, table);
-                                                setLineageLists(cols, table, depth);
 
-                                            }
-                                        } catch (Exception e) {
-                                            System.out.println("error : " + e + ",fromItem : " + selectList.getFromItem().toString());
-                                            continue;
+                                        if(selectList.getFromItem().getClass().getSimpleName().equals("Table")){
+                                            //from 테이블의 meta를 추가함
+                                            String table = ((Table) selectList.getFromItem()).getName();
+                                            ArrayList <String> cols = getKey(metadatas, table);
+                                            setLineageLists(cols, table, depth);
+
                                         }
                                     }
 
@@ -129,22 +125,17 @@ public class GetLineage {
                                         System.out.println(selectList.getJoins().toString());
                                         for (Join join : selectList.getJoins()) {
                                             if (join.getRightItem() != null) {
-                                                //TODO : join.getRightItem() 가 table 형태가 아닐때 exception 발생
-                                                try {
-                                                    if (((Table) join.getRightItem()) != null) {
-                                                        String table = ((Table) join.getRightItem()).getName();
-                                                        ArrayList <String> cols = getKey(metadatas, table);
-                                                        setLineageLists(cols, table, depth);
-                                                    }
-                                                } catch (Exception e) {
-                                                    System.out.println("error : " + e + ", join.getRightItem : " + join.getRightItem().toString());
-                                                    continue;
+                                                //join.getRightItem() 가 table 형태
+                                                if(join.getRightItem().getClass().getSimpleName().equals("Table")){
+                                                    String table = ((Table) join.getRightItem()).getName();
+                                                    ArrayList <String> cols = getKey(metadatas, table);
+                                                    setLineageLists(cols, table, depth);
+
                                                 }
 
                                             }
 
                                         }
-
 
                                     }
 
@@ -269,7 +260,6 @@ public class GetLineage {
                     listsize--;
                 }
 
-
                 printLineagelist(lineageLists);
 
                 //System.out.println("lineagelist : " + lineageLists.toString());
@@ -326,8 +316,11 @@ public class GetLineage {
         //String sql = "select * from test1 join test2 on test1.a = test2.d";
         //TODO : 구문 파싱 체크 해야 함
         //String sql = "select COUNT from (SELECT g, (SELECT COUNT(b) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k)";
-        String sql = "SELECT g, (SELECT COUNT(*) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k";
+        //String sql = "SELECT g, (SELECT COUNT(*) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k";
         //String sql = "select cnt from (select count(*) as cnt from test1)";
+        String sql = "SELECT a, c FROM test1 WHERE b IN (SELECT a FROM test1 WHERE b = 'MA2100')";
+
+
         return sql;
     }
 
