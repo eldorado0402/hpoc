@@ -1,6 +1,5 @@
 package com.metatron.sqlstatics;
 
-import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -214,8 +213,11 @@ public class GetLineage {
                                 } else { //TODO:metadata에 정보가 없는 경우..... 이전 쿼리에서 정보가 있는 경우라고 볼수 있음
                                     //TODO: lineagelist 에 정보가 있는지 체크
                                     for (LineageInfo colinfo : lineageLists) {
-                                        if (colinfo.getColumn() == col_name || colinfo.getColumnAlias() == col_name) {
-                                            lineageinfo.setColumn(colinfo.getColumn());
+                                        if ((colinfo.getColumn() != null && colinfo.getColumn().equals(col_name)) ||
+                                                (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equals(col_name))) {
+                                            //TODO: colinfo.getColumn() or col_name 중에 어느것이 더 나은지 결정해야 함
+                                            //lineageinfo.setColumn(colinfo.getColumn());
+                                            lineageinfo.setColumn(col_name);
                                             lineageinfo.setTable(colinfo.getTable());
                                             lineageinfo.setTableAlias(colinfo.getTableAlias());
                                             lineageinfo.setColumnAlias(colinfo.getColumnAlias());
@@ -228,63 +230,32 @@ public class GetLineage {
                                 }
 
 
-
                             } else if (((SelectExpressionItem) selectItem).getExpression().getClass().getSimpleName().equals("Function")) {
                                 //TODO: expression 자체를 넣어야 하는가?... 컬럼만 사용해야 하는가... 컬럼을 뗴어 내는 것은 추후 고려
+                                col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
+                                lineageinfo.setColumn(col_name);
 
+                                if (((SelectExpressionItem) selectItem).getAlias() != null) {
+                                    lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
+                                }
 
-                                System.out.println("aa");
+                                lineageinfo.setDepth(depth);
+                                lineageinfo.setTable(null);
+                                lineageinfo.setTableAlias(null);
+
+                            } else { //selectbody...and so on
+                                col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
+                                lineageinfo.setColumn(col_name);
+
+                                if (((SelectExpressionItem) selectItem).getAlias() != null) {
+                                    lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
+                                }
+
+                                lineageinfo.setDepth(depth);
+                                lineageinfo.setTable(null);
+                                lineageinfo.setTableAlias(null);
 
                             }
-//                           try{
-//                                col_name = ((Column)((SelectExpressionItem) selectItem).getExpression()).getColumnName();
-//
-//                                if(((Column)((SelectExpressionItem) selectItem).getExpression()).getTable() != null)
-//                                    table_name = ((Column)((SelectExpressionItem) selectItem).getExpression()).getTable().getName();
-//
-//                            }catch(Exception e){ // 컬럼이 아닐때
-//                                //TODO: 컬럼이 아니고 그냥 표현식일 수도 있음
-//                               System.out.println(((SelectExpressionItem) selectItem).getExpression().getClass().getSimpleName());
-//                                continue;
-//                            }
-
-
-                            //String col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-//                            LineageInfo lineageinfo = new LineageInfo();
-//
-//                            if (metadatas.containsKey(col_name)) { //메타 정보에서 추출하기
-//
-//                                //table 정보
-//                                if (sources.containsKey(metadatas.get(col_name))) {
-//                                    lineageinfo.setTable(metadatas.get(col_name));
-//                                    lineageinfo.setTableAlias(sources.get(metadatas.get(col_name)));
-//                                }
-//
-//                                //
-//                                lineageinfo.setColumn(col_name);
-//
-//                                if (((SelectExpressionItem) selectItem).getAlias() != null) {
-//                                    lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-//                                }
-//
-//                                lineageinfo.setDepth(depth);
-//
-//
-//                            } else { //TODO:metadata에 정보가 없는 경우..... 이전 쿼리에서 정보가 있는 경우라고 볼수 있음
-//                                //TODO: lineagelist 에 정보가 있는지 체크
-//                                for (LineageInfo colinfo : lineageLists) {
-//                                    if (colinfo.getColumn() == col_name || colinfo.getColumnAlias() == col_name) {
-//                                        lineageinfo.setColumn(colinfo.getColumn());
-//                                        lineageinfo.setTable(colinfo.getTable());
-//                                        lineageinfo.setTableAlias(colinfo.getTableAlias());
-//                                        lineageinfo.setColumnAlias(colinfo.getColumnAlias());
-//                                        lineageinfo.setDepth(depth);
-//
-//                                    }
-//
-//                                }
-//
-//                            }
 
                             lineageLists.add(lineageinfo);
                         }
@@ -347,13 +318,16 @@ public class GetLineage {
     }
 
     private String getSQL() {
-        String sql = "select * from test3, test2, ( select a , b , e from test1, test2) k";
+        //String sql = "select * from test3, test2, ( select a , b , e from test1, test2) k";
         //String sql = "select * from test3, test2";
         //String sql = "select a,b,c from test3, test2, ( select a , b , e from test1, test2) k";
         //String sql = "select t1.a ,t2.d from test1 t1,test2 t2";
         //TODO: join 구문 테이블 리스트 확인해 볼 필요 있음
         //String sql = "select * from test1 join test2 on test1.a = test2.d";
-        //String sql = "SELECT a, (SELECT COUNT(b) as cnt FROM test1 o WHERE o.a=c.g) COUNT FROM test3 c";
+        //TODO : 구문 파싱 체크 해야 함
+        //String sql = "select COUNT from (SELECT g, (SELECT COUNT(b) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k)";
+        String sql = "SELECT g, (SELECT COUNT(*) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k";
+        //String sql = "select cnt from (select count(*) as cnt from test1)";
         return sql;
     }
 
