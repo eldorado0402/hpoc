@@ -9,6 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
+        /*
         //read config
         try {
 
@@ -39,6 +40,11 @@ public class Main {
             logger.error(e.getMessage());
         }
 
+        */
+
+        GetLineage lineage = new GetLineage();
+        lineage.makeLineageInfos("test string");
     }
+
 
 }
