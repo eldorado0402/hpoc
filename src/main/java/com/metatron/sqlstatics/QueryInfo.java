@@ -61,13 +61,13 @@ public class QueryInfo extends TablesNamesFinder{
             }
         }
 
-        if (plainSelect.getWhere() != null) {
-            plainSelect.getWhere().accept(this);
-        }
-
-        if (plainSelect.getHaving() != null) {
-            plainSelect.getHaving().accept(this);
-        }
+//        if (plainSelect.getWhere() != null) {
+//            plainSelect.getWhere().accept(this);
+//        }
+//
+//        if (plainSelect.getHaving() != null) {
+//            plainSelect.getHaving().accept(this);
+//        }
 
         if (plainSelect.getOracleHierarchical() != null) {
             plainSelect.getOracleHierarchical().accept(this);

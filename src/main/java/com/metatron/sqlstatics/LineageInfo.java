@@ -8,6 +8,7 @@ public class LineageInfo {
     String tableAlias;
     String column;
     String columnAlias;
+    String schema;
     int depth;
 
 
@@ -53,6 +54,16 @@ public class LineageInfo {
     }
 
     //getta
+    public String getSchema() {
+        return schema;
+    }
+
+    //setta
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    //getta
     public int getDepth() {
         return depth;
     }
@@ -66,7 +77,8 @@ public class LineageInfo {
 
     public String toString() {
         return "LineageInfo{" +
-                "table=" + table +
+                "schema=" + schema +
+                ", table=" + table +
                 ", tableAlias='" + tableAlias + '\'' +
                 ", column='" + column + '\'' +
                 ", columnAlias=" + columnAlias + '\'' +

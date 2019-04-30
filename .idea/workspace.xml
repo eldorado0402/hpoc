@@ -2,11 +2,19 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java" line="95" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java" description="            if(info.contains(&quot;.&quot;)){&#10;              ..." line="389" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3daf7297-446d-4702-a277-f48c8c9732ae" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_12.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/query_statics.iml" beforeDir="false" afterPath="$PROJECT_DIR$/query_statics.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -22,64 +30,53 @@
       <file leaf-file-name="GetLineage.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="320" column="8" lean-forward="true" selection-start-line="320" selection-start-column="8" selection-end-line="320" selection-end-column="8" />
+            <state relative-caret-position="-119">
+              <caret line="119" column="83" lean-forward="true" selection-start-line="119" selection-start-column="83" selection-end-line="119" selection-end-column="83" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#721#734#0" expanded="true" />
-                <element signature="e#799#815#0" expanded="true" />
-                <element signature="e#1001#1009#0" expanded="true" />
-                <element signature="e#7096#7109#0" expanded="true" />
+                <element signature="e#652#665#0" expanded="true" />
+                <element signature="e#730#746#0" expanded="true" />
+                <element signature="e#935#943#0" expanded="true" />
+                <element signature="e#5895#5908#0" expanded="true" />
+                <element signature="e#14032#14048#0" expanded="true" />
+                <element signature="e#17923#17931#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Column.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/schema/Column.class">
+      <file leaf-file-name="StatementImpl.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/mysql/mysql-connector-java/8.0.12/mysql-connector-java-8.0.12.jar!/com/mysql/cj/jdbc/StatementImpl.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="12" column="19" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
+            <state relative-caret-position="520">
+              <caret line="952" selection-start-line="952" selection-end-line="952" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExpressionList.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/expression/operators/relational/ExpressionList.class">
+      <file leaf-file-name="config.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
-              <folding>
-                <element signature="e#716#717#0" expanded="true" />
-                <element signature="e#755#756#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="348">
+              <caret line="28" column="15" lean-forward="true" selection-start-line="28" selection-start-column="15" selection-end-line="28" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Function.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/expression/Function.class">
+      <file leaf-file-name="ParseDataRecord.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+            <state relative-caret-position="765">
+              <caret line="83" selection-start-line="83" selection-end-line="95" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Class.java" pinned="false" current-in-tab="false">
-        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/lang/Class.java">
+      <file leaf-file-name="Table.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/schema/Table.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1239">
-              <caret line="1304" column="18" selection-start-line="1304" selection-start-column="18" selection-end-line="1304" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ASTNodeAccess.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/parser/ASTNodeAccess.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
+            <state relative-caret-position="183">
+              <caret line="96" column="18" selection-start-line="96" selection-start-column="18" selection-end-line="96" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -87,8 +84,8 @@
       <file leaf-file-name="LineageInfo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="581">
-              <caret line="72" column="35" selection-start-line="72" selection-start-column="35" selection-end-line="72" selection-end-column="35" />
+            <state relative-caret-position="217">
+              <caret line="77" column="30" lean-forward="true" selection-start-line="77" selection-start-column="30" selection-end-line="77" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -96,29 +93,49 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleNode.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/parser/SimpleNode.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SelectItem.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/SelectItem.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="QueryInfo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="63" selection-start-line="63" selection-end-line="69" selection-end-column="9" />
+            <state relative-caret-position="285">
+              <caret line="19" column="46" selection-start-line="19" selection-start-column="46" selection-end-line="19" selection-end-column="46" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QueryParser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="427">
+              <caret line="392" column="23" selection-start-line="392" selection-start-column="17" selection-end-line="392" selection-end-column="23" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TablesNamesFinder.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/util/TablesNamesFinder.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="203">
+              <caret line="206" column="28" lean-forward="true" selection-start-line="206" selection-start-column="28" selection-end-line="206" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#9316#9317#0" expanded="true" />
+                <element signature="e#9368#9369#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="426">
+              <caret line="45" column="48" selection-start-line="45" selection-start-column="48" selection-end-line="45" selection-end-column="48" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -137,11 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>getSourceTablec</find>
-      <find>log</find>
-      <find>Closer</find>
-      <find>java.io.File</find>
-      <find>ProxyLocalFileSystem</find>
       <find>orcFilePath</find>
       <find>Lineage log path does not exist</find>
       <find>setEngineType</find>
@@ -163,10 +175,15 @@
       <find>tables</find>
       <find>partItems</find>
       <find>lineageLists</find>
-      <find>setLineageLists</find>
       <find>lineageinfo</find>
       <find>info</find>
       <find>Column</find>
+      <find>Table</find>
+      <find>getFullyQualifiedName</find>
+      <find>source</find>
+      <find>setLineageLists</find>
+      <find>sourceTableInfos</find>
+      <find>getKey</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -188,14 +205,14 @@
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/SQLConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/resources/log4j.properties" />
         <option value="$PROJECT_DIR$/src/main/resources/log4j2.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/resources/config.properties" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/config.properties" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryInfo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java" />
       </list>
     </option>
@@ -227,7 +244,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -276,8 +294,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -340,12 +357,13 @@
       <workItem from="1556068441411" duration="312000" />
       <workItem from="1556079018789" duration="10430000" />
       <workItem from="1556091953063" duration="8896000" />
-      <workItem from="1556149988777" duration="9728000" />
+      <workItem from="1556149988777" duration="13929000" />
+      <workItem from="1556589576287" duration="27170000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="150350000" />
+    <option name="totallyTimeSpent" value="181721000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1027" extended-state="0" />
@@ -362,11 +380,11 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.29658213" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4895259" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3296582" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20757021" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1971917" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -383,18 +401,18 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="bottom" id="Version Control" order="11" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.30540243" />
       <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.3296582" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Java Enterprise" order="12" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18315019" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.30540243" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="5" />
@@ -404,11 +422,11 @@
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.3296582" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="11" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35281146" />
       <window_info id="Capture Tool" order="4" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Java Enterprise" order="12" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.3296582" />
       <window_info anchor="right" id="Maven Projects" order="8" />
       <window_info id="Favorites" order="6" side_tool="true" />
     </layout-to-restore>
@@ -430,12 +448,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java</url>
-          <line>206</line>
+          <line>38</line>
           <properties />
-          <option name="timeStamp" value="82" />
+          <option name="timeStamp" value="127" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="83" />
+      <option name="time" value="128" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -459,8 +477,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar!/org/json/simple/parser/JSONParser.class" />
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/hadoop/hadoop-common/2.7.3/hadoop-common-2.7.3.jar!/org/apache/hadoop/conf/Configuration.class" />
     <entry file="jar://$MAVEN_REPOSITORY$/org/apache/hive/shims/hive-shims-common/2.3.0/hive-shims-common-2.3.0.jar!/org/apache/hadoop/fs/ProxyFileSystem.class" />
     <entry file="jar://$MAVEN_REPOSITORY$/org/apache/hive/shims/hive-shims-common/2.3.0/hive-shims-common-2.3.0.jar!/org/apache/hadoop/fs/ProxyLocalFileSystem.class" />
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/DruidLineageRecord.java" />
@@ -499,31 +515,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1470">
-          <caret line="98" column="18" selection-start-line="98" selection-start-column="18" selection-end-line="98" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/log4j2.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
           <caret line="30" column="40" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="47" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="265" column="24" selection-start-line="265" selection-start-column="24" selection-end-line="265" selection-end-column="75" />
         </state>
       </provider>
     </entry>
@@ -552,23 +547,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="28" column="28" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="83" selection-start-line="83" selection-end-line="95" />
         </state>
       </provider>
     </entry>
@@ -607,34 +585,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/schema/Table.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
-          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/FromItemVisitor.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/AllTableColumns.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -649,13 +603,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="56" column="20" selection-start-line="56" selection-start-column="20" selection-end-line="56" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/util/TablesNamesFinder.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1530">
-          <caret line="105" selection-start-line="105" selection-end-line="105" selection-end-column="42" />
         </state>
       </provider>
     </entry>
@@ -684,10 +631,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding>
-            <element signature="e#686#687#0" expanded="true" />
-            <element signature="e#724#725#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -712,13 +655,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/lang/Class.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1239">
-          <caret line="1304" column="18" selection-start-line="1304" selection-start-column="18" selection-end-line="1304" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/expression/Function.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -735,12 +671,8 @@
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/expression/operators/relational/ExpressionList.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
+        <state relative-caret-position="240">
           <caret line="26" column="28" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
-          <folding>
-            <element signature="e#716#717#0" expanded="true" />
-            <element signature="e#755#756#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -751,36 +683,137 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="581">
-          <caret line="72" column="35" selection-start-line="72" selection-start-column="35" selection-end-line="72" selection-end-column="35" />
+        <state relative-caret-position="870">
+          <caret line="70" selection-start-line="70" selection-end-line="71" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="263" selection-start-line="263" selection-end-line="263" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/AllTableColumns.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="20" column="14" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+          <folding>
+            <element signature="e#498#499#0" expanded="true" />
+            <element signature="e#531#532#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="110" selection-start-line="110" selection-end-line="111" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="83" selection-start-line="83" selection-end-line="95" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="392" column="23" selection-start-line="392" selection-start-column="17" selection-end-line="392" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="426">
+          <caret line="45" column="48" selection-start-line="45" selection-start-column="48" selection-end-line="45" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/schema/Table.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="96" column="18" selection-start-line="96" selection-start-column="18" selection-end-line="96" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/util/TablesNamesFinder.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="206" column="28" lean-forward="true" selection-start-line="206" selection-start-column="28" selection-end-line="206" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#9316#9317#0" expanded="true" />
+            <element signature="e#9368#9369#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/mysql/mysql-connector-java/8.0.12/mysql-connector-java-8.0.12.jar!/com/mysql/cj/jdbc/StatementImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="952" selection-start-line="952" selection-end-line="952" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="63" selection-start-line="63" selection-end-line="69" selection-end-column="9" />
+        <state relative-caret-position="285">
+          <caret line="19" column="46" selection-start-line="19" selection-start-column="46" selection-end-line="19" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/LineageInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="320" column="8" lean-forward="true" selection-start-line="320" selection-start-column="8" selection-end-line="320" selection-end-column="8" />
+        <state relative-caret-position="217">
+          <caret line="77" column="30" lean-forward="true" selection-start-line="77" selection-start-column="30" selection-end-line="77" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#721#734#0" expanded="true" />
-            <element signature="e#799#815#0" expanded="true" />
-            <element signature="e#1001#1009#0" expanded="true" />
-            <element signature="e#7096#7109#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="28" column="15" lean-forward="true" selection-start-line="28" selection-start-column="15" selection-end-line="28" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/GetLineage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-119">
+          <caret line="119" column="83" lean-forward="true" selection-start-line="119" selection-start-column="83" selection-end-line="119" selection-end-column="83" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#652#665#0" expanded="true" />
+            <element signature="e#730#746#0" expanded="true" />
+            <element signature="e#935#943#0" expanded="true" />
+            <element signature="e#5895#5908#0" expanded="true" />
+            <element signature="e#14032#14048#0" expanded="true" />
+            <element signature="e#17923#17931#0" expanded="true" />
           </folding>
         </state>
       </provider>
