@@ -1,7 +1,4 @@
-package com.metatron.sqlstatics;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+package com.metatron.popularity;
 
 public class LineageInfo {
     String table;
@@ -72,7 +69,6 @@ public class LineageInfo {
     public void setDepth(int depth) {
         this.depth = depth;
     }
-
 
 
     public String toString() {

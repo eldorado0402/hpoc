@@ -1,4 +1,4 @@
-package com.metatron.sqlstatics;
+package com.metatron.popularity;
 
 
 import net.sf.jsqlparser.expression.Expression;
@@ -11,7 +11,7 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.*;
 
-public class QueryInfo extends TablesNamesFinder {
+public class ColumnsFinder extends TablesNamesFinder {
 
     private static final String NOT_SUPPORTED_YET = "Not supported yet.";
     private Map <String, String> selectItem = new HashMap <String, String>();
@@ -20,7 +20,7 @@ public class QueryInfo extends TablesNamesFinder {
     private boolean allowColumnProcessing = false;
     private List <String> otherItemNames;
 
-    public QueryInfo() {
+    public ColumnsFinder() {
     }
 
 
@@ -60,13 +60,13 @@ public class QueryInfo extends TablesNamesFinder {
             }
         }
 
-        if (plainSelect.getWhere() != null) {
-            plainSelect.getWhere().accept(this);
-        }
-
-        if (plainSelect.getHaving() != null) {
-            plainSelect.getHaving().accept(this);
-        }
+//        if (plainSelect.getWhere() != null) {
+//            plainSelect.getWhere().accept(this);
+//        }
+//
+//        if (plainSelect.getHaving() != null) {
+//            plainSelect.getHaving().accept(this);
+//        }
 
         if (plainSelect.getOracleHierarchical() != null) {
             plainSelect.getOracleHierarchical().accept(this);

@@ -4,15 +4,14 @@ import au.com.bytecode.opencsv.CSVReader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MakeJsonLogSample {
 
@@ -53,7 +52,7 @@ public class MakeJsonLogSample {
                 }
 
             } catch (IOException e) {
-               logger.info(e.getMessage());
+                logger.info(e.getMessage());
             }
         }
     }
@@ -128,7 +127,6 @@ public class MakeJsonLogSample {
             }
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -138,15 +136,15 @@ public class MakeJsonLogSample {
                 }
 
             } catch (IOException e) {
-               logger.info(e.getMessage());
+                logger.info(e.getMessage());
             }
 
-            try{
-                if(csvReader != null){
+            try {
+                if (csvReader != null) {
                     csvReader.close();
                 }
-            }catch (IOException e) {
-               logger.info(e.getMessage());
+            } catch (IOException e) {
+                logger.info(e.getMessage());
             }
 
         }

@@ -21,7 +21,6 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.*;
 import java.util.List;
 
@@ -218,8 +217,8 @@ public class QueryParser {
             String line;
 
             //output file
-            if(fs.exists(outputFile)){
-                fs.delete(outputFile,true);
+            if (fs.exists(outputFile)) {
+                fs.delete(outputFile, true);
                 logger.info("delete previous parser file path in : " + outputFile);
             }
 
@@ -326,6 +325,12 @@ public class QueryParser {
                     writeResultToHdfsFile(writer, parseData);
 
                 }
+
+//                //TODO : get lineage !!!!
+//                if (type == SqlType.SELECT) {
+//                    GetLineage lineage = new GetLineage();
+//                    lineage.makeLineageInfos(query);
+//                }
 
             }
 

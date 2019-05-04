@@ -1,10 +1,13 @@
-package com.metatron.sqlstatics;
+package com.metatron.popularity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metatron.sqlstatics.SQLConfiguration;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
+import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.Reader;
@@ -19,14 +22,15 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 
-public class DruidLineageRecordOrcWriter {
+public class DruidPopularityRecordOrcWriter {
 
-    private static final Logger logger = LoggerFactory.getLogger(DruidLineageRecordOrcWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DruidPopularityRecordOrcWriter.class);
 
     public static boolean isGzipped(DataInputStream is) {
         try {
@@ -69,14 +73,14 @@ public class DruidLineageRecordOrcWriter {
         FileSystem fs = FileSystem.get(hadoopConf);
 
         if (!fs.exists(logPath)) {
-            logger.info("Lineage log path does not exist");
+            logger.info("Popularity log path does not exist");
             System.exit(1);
         }
 
         //LOG PATH 가 디렉터리 일 때만 구현해 놓음
         if (fs.isDirectory(logPath)) {
             RemoteIterator <LocatedFileStatus> iterator = fs.listFiles(logPath, false);
-            List <ParseDataRecord> records = new ArrayList <ParseDataRecord>();
+            List <PopularityDataRecord> records = new ArrayList <PopularityDataRecord>();
 
             while (iterator.hasNext()) {
                 FileStatus status = iterator.next();
@@ -96,7 +100,7 @@ public class DruidLineageRecordOrcWriter {
                         while ((line = br.readLine()) != null) {
                             try {
                                 linenum++;
-                                ParseDataRecord record = mapper.readValue(line.getBytes(), ParseDataRecord.class);
+                                PopularityDataRecord record = mapper.readValue(line.getBytes(), PopularityDataRecord.class);
                                 records.add(record);
                             } catch (Exception e) {
                                 logger.info(e.toString());
@@ -112,7 +116,7 @@ public class DruidLineageRecordOrcWriter {
                 }
             }
 
-            //DruidLineageRecordOrcWriter writer = new DruidLineageRecordOrcWriter();
+            //DruidPopularityRecordOrcWriter writer = new DruidPopularityRecordOrcWriter();
 
             if (overwrite && fs.exists(new Path(orcFilePath)))
                 fs.delete(new Path(orcFilePath), true);
@@ -122,7 +126,7 @@ public class DruidLineageRecordOrcWriter {
         }
     }
 
-    public void writeOrc(List <ParseDataRecord> records, String orcFilePath) throws Exception {
+    public void writeOrc(List <PopularityDataRecord> records, String orcFilePath) throws Exception {
         //ORC 스키마 정의, Hive 내 bdpown.lineage 테이블 스키마 참조
         Configuration conf = new Configuration();
 
@@ -141,16 +145,17 @@ public class DruidLineageRecordOrcWriter {
 
         }
 
-
         TypeDescription schema = TypeDescription.fromString("struct<" +
                 "sqlid:string," +
                 "enginetype:string," +
-                "cluster:string," +
-                "sqltype:string," +
-                "sourcetablename:string," +
-                "targettablename:string," +
                 "sql:string," +
-                "eventtime:bigint" +
+                "eventtime:bigint," +
+                "shcema:string," +
+                "sourcetablename:string," +
+                "tableAlias:string," +
+                "columnname:string," +
+                "columnAlias:string," +
+                "depth:bigint" +
                 ">");
 
         Writer writer = OrcFile.createWriter(new Path(orcFilePath),
@@ -161,26 +166,34 @@ public class DruidLineageRecordOrcWriter {
 
         BytesColumnVector sqlId = (BytesColumnVector) batch.cols[0];
         BytesColumnVector engineType = (BytesColumnVector) batch.cols[1];
-        BytesColumnVector cluster = (BytesColumnVector) batch.cols[2];
-        BytesColumnVector sqlType = (BytesColumnVector) batch.cols[3];
-        BytesColumnVector sourceTableName = (BytesColumnVector) batch.cols[4];
-        BytesColumnVector targetTableName = (BytesColumnVector) batch.cols[5];
-        BytesColumnVector sql = (BytesColumnVector) batch.cols[6];
-        LongColumnVector eventTime = (LongColumnVector) batch.cols[7];
+        BytesColumnVector sql = (BytesColumnVector) batch.cols[2];
+        LongColumnVector eventTime = (LongColumnVector) batch.cols[3];
+        BytesColumnVector shcema = (BytesColumnVector) batch.cols[4];
+        BytesColumnVector sourcetablename = (BytesColumnVector) batch.cols[5];
+        BytesColumnVector tableAlias = (BytesColumnVector) batch.cols[6];
+        BytesColumnVector columnname = (BytesColumnVector) batch.cols[7];
+        BytesColumnVector columnAlias = (BytesColumnVector) batch.cols[8];
+       // DecimalColumnVector depth = (DecimalColumnVector) batch.cols[9];
+        LongColumnVector depth = (LongColumnVector) batch.cols[9];
+
 
         int row;
 
-        for (ParseDataRecord record : records) {
+        for (PopularityDataRecord record : records) {
             row = batch.size++;
 
             sqlId.setVal(row, toBytes(record.getSqlId()));
             engineType.setVal(row, toBytes(record.getEngineType()));
-            cluster.setVal(row, toBytes(record.getCluster()));
-            sqlType.setVal(row, toBytes(record.getSqlType()));
-            sourceTableName.setVal(row, toBytes(record.getSourceTable(), true));
-            targetTableName.setVal(row, toBytes(record.getTargetTable(), true));
-            sql.setVal(row, toBytes(record.getsql()));
+            shcema.setVal(row, toBytes(record.getSchema(), true));
+            sourcetablename.setVal(row, toBytes(record.getTable(), true));
+            tableAlias.setVal(row, toBytes(record.getTableAlias(), true));
+            columnname.setVal(row, toBytes(record.getColumn(), true));
+            columnAlias.setVal(row, toBytes(record.getColumnAlias(), true));
+            sql.setVal(row, toBytes(record.getSql()));
             eventTime.vector[row] = record.getCreatedTime();
+            depth.vector[row] = record.getDepth();
+           // depth.set(row, HiveDecimal.create(BigDecimal.valueOf(record.getDepth())));
+
 
             if (batch.size == batch.getMaxSize()) {
                 writer.addRowBatch(batch);

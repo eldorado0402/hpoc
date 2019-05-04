@@ -8,38 +8,38 @@
         -->
 
         <RollingFile name="file" fileName="./logs/statics.log" filePattern="./logs/statics.%i.%d{yyyy-MM-dd}.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" /> <!-- 이 용량이 초과되면 아래 DefaultRolloverStrategy 정책만큼 넘버링 할거다. -->
+                <SizeBasedTriggeringPolicy size="10MB"/> <!-- 이 용량이 초과되면 아래 DefaultRolloverStrategy 정책만큼 넘버링 할거다. -->
             </Policies>
-            <DefaultRolloverStrategy max="1000" fileIndex="min" /><!-- 0부터 1000개 까지만 만들거다 1000개 초과되면 파일이 더생성안된다. -->
+            <DefaultRolloverStrategy max="1000" fileIndex="min"/><!-- 0부터 1000개 까지만 만들거다 1000개 초과되면 파일이 더생성안된다. -->
         </RollingFile>
     </appenders>
 
     <loggers>
 
         <!-- 모든 로그는 dubug레벨 이상일때만 찍고 -->
-        <root level="debug" additivity="false" >
-           <!-- <appender-ref ref="console" /> -->
-            <appender-ref ref="file" />
+        <root level="debug" additivity="false">
+            <!-- <appender-ref ref="console" /> -->
+            <appender-ref ref="file"/>
         </root>
 
         <!-- 로그많이 찍어대는 요놈들은 warn수준이상만 찍겠다. -->
 
-        <logger name="org.springframework" level="warn" additivity="false" >
+        <logger name="org.springframework" level="warn" additivity="false">
             <!--  <appender-ref ref="console" /> -->
-             <appender-ref ref="file" />
-         </logger>
-
-         <logger name="org.apache.http" level="warn" additivity="false" >
-             <!-- <appender-ref ref="console" /> -->
-             <appender-ref ref="file" />
-         </logger>
-
-        <logger name="org.apache.http" level="info" additivity="false" >
-            <!-- <appender-ref ref="console" /> -->
-            <appender-ref ref="file" />
+            <appender-ref ref="file"/>
         </logger>
 
-     </loggers>
- </configuration>
+        <logger name="org.apache.http" level="warn" additivity="false">
+            <!-- <appender-ref ref="console" /> -->
+            <appender-ref ref="file"/>
+        </logger>
+
+        <logger name="org.apache.http" level="info" additivity="false">
+            <!-- <appender-ref ref="console" /> -->
+            <appender-ref ref="file"/>
+        </logger>
+
+    </loggers>
+</configuration>
