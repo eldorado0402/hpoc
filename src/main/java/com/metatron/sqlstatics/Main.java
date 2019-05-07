@@ -65,8 +65,8 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
-*/
 
+*/
         GetLineage lineage = new GetLineage();
         lineage.makeLineageInfos("test string");
     }

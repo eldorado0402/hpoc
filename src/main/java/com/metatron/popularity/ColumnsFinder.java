@@ -9,6 +9,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
+
 import java.util.*;
 
 public class ColumnsFinder extends TablesNamesFinder {
@@ -16,15 +17,16 @@ public class ColumnsFinder extends TablesNamesFinder {
     private static final String NOT_SUPPORTED_YET = "Not supported yet.";
     private Map <String, String> selectItem = new HashMap <String, String>();
     private ArrayList <PlainSelect> selectBodyLists = new ArrayList <PlainSelect>();
-    private HashMap <String, String> tables; // table name, table alias
+    private ArrayList <MetadataInfo> tables; // table name, table alias
     private boolean allowColumnProcessing = false;
     private List <String> otherItemNames;
+    final static String defalutSchema = "polaris_dev";
 
     public ColumnsFinder() {
     }
 
 
-    public HashMap <String, String> getTableInfoList(Statement statement) {
+    public ArrayList <MetadataInfo> getTableInfoList(Statement statement) {
         this.init(false);
         statement.accept(this);
         return this.tables;
@@ -80,7 +82,7 @@ public class ColumnsFinder extends TablesNamesFinder {
         return this.selectBodyLists;
     }
 
-    public HashMap <String, String> getTableInfoList(Expression expr) {
+    public ArrayList <MetadataInfo>getTableInfoList(Expression expr) {
         this.init(true);
         expr.accept(this);
         return this.tables;
@@ -89,13 +91,17 @@ public class ColumnsFinder extends TablesNamesFinder {
     @Override
     public void visit(Table tableName) {
         String tableWholeName = this.extractTableName(tableName);
-        if (!this.otherItemNames.contains(tableWholeName.toLowerCase()) && !this.tables.containsKey(tableWholeName)) {
+        MetadataInfo tableinfo = new MetadataInfo();
+
+        if (!this.otherItemNames.contains(tableWholeName.toLowerCase()) && ! checkTable(tableName.getSchemaName(),tableName.getName())) {
             //this.tables.add(tableWholeName);
 
             if (tableName.getAlias() != null)
-                this.tables.put(tableWholeName, tableName.getAlias().getName());
+                tableinfo.setMetadata(tableName.getSchemaName(),tableName.getName(), null, tableName.getAlias().getName());
             else
-                this.tables.put(tableWholeName, null);
+                tableinfo.setMetadata(tableName.getSchemaName(),tableName.getName(), null, null);
+
+            tables.add(tableinfo);
         }
 
     }
@@ -103,10 +109,23 @@ public class ColumnsFinder extends TablesNamesFinder {
 
     protected void init(boolean allowColumnProcessing) {
         this.otherItemNames = new ArrayList();
-        this.tables = new HashMap <String, String>();
+        this.tables = new ArrayList <MetadataInfo>();
         this.allowColumnProcessing = allowColumnProcessing;
     }
 
+
+    private boolean checkTable(String schema, String table){
+        if(schema == null) {
+            schema = this.defalutSchema;
+        }
+
+        for(MetadataInfo info :  tables){
+            if(schema == info.getSchema() && table == info.getTable() )
+                return true;
+        }
+
+        return false;
+    }
 
 }
 
