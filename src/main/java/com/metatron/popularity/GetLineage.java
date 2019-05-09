@@ -24,7 +24,7 @@ import net.sf.jsqlparser.statement.insert.*;
 
 public class GetLineage {
 
-    final static String defalutSchema = "polaris_dev";
+    final static String defalutSchema = "hynix_oracle";
     private static final Logger logger = LoggerFactory.getLogger(GetLineage.class);
     private ArrayList <LineageInfo> lineageLists = new ArrayList <LineageInfo>();
 
@@ -36,7 +36,7 @@ public class GetLineage {
         QueryParser parser = new QueryParser();
         MetadataInfo metadata = new MetadataInfo();
 
-        System.out.println("query : " + sql);
+        //System.out.println("query : " + sql);
 
         //TODO : where 절도 파싱해야 하나?
 
@@ -133,8 +133,15 @@ public class GetLineage {
                                             String table = ((Table) selectList.getFromItem()).getName();
 
                                             ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
-                                            setLineageLists(cols, table, depth, schema);
+                                            //setLineageLists(cols, table, depth, schema);
 
+                                            if(cols.size() > 0) {
+                                                setLineageLists(cols, table, depth, schema);
+                                            }
+                                            else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
+                                                cols.add(((AllColumns) selectItem).toString());
+                                                setLineageLists(cols, table, depth, schema);
+                                            }
                                         }
                                     }
 
@@ -149,7 +156,14 @@ public class GetLineage {
                                                     String table = ((Table) join.getRightItem()).getName();
 
                                                     ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
-                                                    setLineageLists(cols, table, depth, schema);
+                                                    //setLineageLists(cols, table, depth, schema);
+                                                    if(cols.size() > 0) {
+                                                        setLineageLists(cols, table, depth, schema);
+                                                    }
+                                                    else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
+                                                        cols.add(((AllColumns) selectItem).toString());
+                                                        setLineageLists(cols, table, depth, schema);
+                                                    }
 
                                                 }
 
@@ -261,8 +275,13 @@ public class GetLineage {
                                     //이전 쿼리에도 정보가 없는 경우 그냥 테이블과 컬럼 정보 set
                                     if( lineageinfo.getColumn() == null && lineageinfo.getTable() == null){
                                         lineageinfo.setColumn(col_name);
+
                                         if(table_name !=null) {
                                             lineageinfo.setTable(table_name);
+                                        }else{ //TODO:hynix 용 추가 로직
+                                            if(sources.size()==1){
+                                                lineageinfo.setTable(sources.get(0).getTable().toString());
+                                            }
                                         }
                                         if(((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable() != null &&
                                                 ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getAlias()!=null) {
@@ -319,7 +338,7 @@ public class GetLineage {
                 }
 
 
-                printLineagelist(lineageLists);
+                //printLineagelist(lineageLists);
                 return lineageLists;
 
 
@@ -452,7 +471,7 @@ public class GetLineage {
         ResultSet rs = null;
 
         ArrayList <String> results = new ArrayList <String>();
-
+/*
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
             String url = sqlConfiguration.get("metatron.metastore.url");
@@ -532,7 +551,7 @@ public class GetLineage {
                 conn = null;
             }
         }
-
+*/
         return results;
 
     }

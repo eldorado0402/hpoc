@@ -149,13 +149,14 @@ public class DruidPopularityRecordOrcWriter {
                 "sqlid:string," +
                 "enginetype:string," +
                 "sql:string," +
+                "sqltype:string," +
                 "eventtime:bigint," +
                 "shcema:string," +
                 "sourcetablename:string," +
                 "tableAlias:string," +
                 "columnname:string," +
                 "columnAlias:string," +
-                "depth:bigint" +
+                "depth:int" +
                 ">");
 
         Writer writer = OrcFile.createWriter(new Path(orcFilePath),
@@ -167,14 +168,15 @@ public class DruidPopularityRecordOrcWriter {
         BytesColumnVector sqlId = (BytesColumnVector) batch.cols[0];
         BytesColumnVector engineType = (BytesColumnVector) batch.cols[1];
         BytesColumnVector sql = (BytesColumnVector) batch.cols[2];
-        LongColumnVector eventTime = (LongColumnVector) batch.cols[3];
-        BytesColumnVector shcema = (BytesColumnVector) batch.cols[4];
-        BytesColumnVector sourcetablename = (BytesColumnVector) batch.cols[5];
-        BytesColumnVector tableAlias = (BytesColumnVector) batch.cols[6];
-        BytesColumnVector columnname = (BytesColumnVector) batch.cols[7];
-        BytesColumnVector columnAlias = (BytesColumnVector) batch.cols[8];
-       // DecimalColumnVector depth = (DecimalColumnVector) batch.cols[9];
-        LongColumnVector depth = (LongColumnVector) batch.cols[9];
+        BytesColumnVector sqltype = (BytesColumnVector) batch.cols[3];
+        LongColumnVector eventTime = (LongColumnVector) batch.cols[4];
+        BytesColumnVector shcema = (BytesColumnVector) batch.cols[5];
+        BytesColumnVector sourcetablename = (BytesColumnVector) batch.cols[6];
+        BytesColumnVector tableAlias = (BytesColumnVector) batch.cols[7];
+        BytesColumnVector columnname = (BytesColumnVector) batch.cols[8];
+        BytesColumnVector columnAlias = (BytesColumnVector) batch.cols[9];
+        //DecimalColumnVector depth = (DecimalColumnVector) batch.cols[10];
+        LongColumnVector depth = (LongColumnVector) batch.cols[10];
 
 
         int row;
@@ -192,7 +194,8 @@ public class DruidPopularityRecordOrcWriter {
             sql.setVal(row, toBytes(record.getSql()));
             eventTime.vector[row] = record.getCreatedTime();
             depth.vector[row] = record.getDepth();
-           // depth.set(row, HiveDecimal.create(BigDecimal.valueOf(record.getDepth())));
+            //depth.set(row, HiveDecimal.create(BigDecimal.valueOf(record.getDepth())));
+            sqltype.setVal(row, toBytes(record.getSqlType()));
 
 
             if (batch.size == batch.getMaxSize()) {

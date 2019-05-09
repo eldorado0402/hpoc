@@ -12,6 +12,7 @@ import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -23,7 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class QueryParser {
 
@@ -376,6 +382,172 @@ public class QueryParser {
 
     }
 
+
+
+    public void getQueryStaticsFromApplicationLogFile() {
+
+        //read log file
+        BufferedReader br = null;
+        FSDataOutputStream fsDataOutputStream = null;
+        PrintWriter writer = null;
+        JSONParser jsonParser = new JSONParser();
+
+        //read config
+        try {
+            //TODO : 추후에는 변경 필요
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            Configuration conf = new Configuration();
+
+            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+
+            conf.addResource(new Path(coreSitePath));
+            conf.addResource(new Path(hdfsSitePathe));
+
+            Path outputFile = new Path(sqlConfiguration.get("hdfs_output_filename"));
+
+            FileSystem fs = FileSystem.get(conf);
+
+            //output file
+            if (fs.exists(outputFile)) {
+                fs.delete(outputFile, true);
+                logger.info("delete previous parser file path in : " + outputFile);
+            }
+
+            fsDataOutputStream = fs.create(outputFile);
+            writer = new PrintWriter(fsDataOutputStream);
+
+            ArrayList<String> logs = readApplicationLogFile();
+
+            for( String query : logs )
+            {
+                QueryParser parser = new QueryParser();
+                List <String> sourceTables = null;
+                Statement statement;
+                SqlType type;
+                String targetTable;
+
+                // sql 이 없으면 다음 라인 처리
+                if (query == null || query.trim().equals(""))
+                    continue;
+
+                //sql 이 있으면 처리 시작
+                //parsing이 안되면 다음 라인 처
+                try {
+                    statement = CCJSqlParserUtil.parse(query);
+                } catch (Exception e) {
+                    logger.error(e + ", query :" + query);
+                    continue;
+                }
+
+                type = parser.getSqlType(query, statement);
+                targetTable = parser.getTargetTable(statement, type);
+
+                //get source table list
+                if (parser.getSourcrTables(statement, type) != null) {
+                    sourceTables = parser.getSourcrTables(statement, type);
+                }
+
+
+                if (sourceTables != null && sourceTables.size() >= 1) {
+
+                    for (String source : sourceTables) {
+                        //output data
+                        ParseDataRecord parseData = new ParseDataRecord();
+
+                        //read from log file
+                        parseData.setSql(query);
+
+                        if (sqlConfiguration.get("engineType") != null)
+                            parseData.setEngineType(sqlConfiguration.get("engineType"));
+
+                        parseData.setCreatedTime(System.currentTimeMillis());
+                        parseData.setCluster("localhost");
+                        parseData.setSqlId(UUID.randomUUID().toString());
+
+                        //set sql Type
+                        parseData.setSqlType(type.toString());
+                        //set target Table
+                        parseData.setTargetTable(targetTable);
+                        //set source Table
+                        parseData.setSourceTable(source);
+
+                        //write
+                        writeResultToHdfsFile(writer, parseData);
+
+                    }
+
+                } else {
+
+                    //output data
+                    ParseDataRecord parseData = new ParseDataRecord();
+
+                    //read from log file
+                    parseData.setSql(query);
+
+                    if (sqlConfiguration.get("engineType") != null)
+                        parseData.setEngineType(sqlConfiguration.get("engineType"));
+
+                    parseData.setCreatedTime(System.currentTimeMillis());
+                    parseData.setCluster("localhost");
+                    parseData.setSqlId(UUID.randomUUID().toString());
+                    //set sql Type
+
+                    parseData.setSqlType(type.toString());
+                    //set target Table
+                    parseData.setTargetTable(targetTable);
+                    //set source Table
+                    parseData.setSourceTable(null);
+
+                    //logger.info(parseData.toString());
+
+                    //write
+                    writeResultToHdfsFile(writer, parseData);
+
+                }
+
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //logger.info(e);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (fsDataOutputStream != null) {
+                    fsDataOutputStream.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     //Get source table
     public List <String> getSourcrTables(Statement statement, SqlType type) {
 
@@ -530,6 +702,49 @@ public class QueryParser {
             e.printStackTrace();
         }
 
+    }
+
+
+    private ArrayList<String> readApplicationLogFile() {
+
+        FileWriter writer = null;
+        InputStream inStream = null;
+        File file = null;
+        ArrayList<String> sqls = new ArrayList<String>();;
+
+        try {
+
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            file = new File(sqlConfiguration.get("application_log_filename"));
+            inStream = new FileInputStream(file);
+            String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+
+            Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}",Pattern.DOTALL);//[sfx] query ~ next line 로그
+            Matcher matcher = MY_PATTERN.matcher(logs);
+
+            while (matcher.find()) {
+                sqls.add(matcher.group(1));
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(inStream != null){
+                    inStream.close();
+                }
+
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+        return sqls;
     }
 
 

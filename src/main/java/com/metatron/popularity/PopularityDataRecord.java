@@ -14,6 +14,7 @@ public class PopularityDataRecord implements Serializable {
     String columnAlias;
     String schema;
     int depth;
+    String sqlType;
 
 
 
@@ -110,6 +111,15 @@ public class PopularityDataRecord implements Serializable {
         this.depth = depth;
     }
 
+    public String getSqlType() {
+        return sqlType;
+    }
+
+    public void setSqlType(String sqlType) {
+        this.sqlType = sqlType;
+    }
+
+
 
     @Override
     public String toString() {
@@ -118,6 +128,7 @@ public class PopularityDataRecord implements Serializable {
                 ", createdTime='" + createdTime + '\'' +
                 ", sqlId='" + sqlId + '\'' +
                 ", sql='" + sql + '\'' +
+                ", sqlType='" + sqlType + '\'' +
                 ", schema=" + schema +
                 ", table=" + table +
                 ", tableAlias='" + tableAlias + '\'' +

@@ -9,13 +9,13 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-
+/*
         //make sample
         MakeJsonLogSample sample = new MakeJsonLogSample();
 
 //        sample.makeSample();
         sample.readApplicationLogFile();
-
+*/
 
         //read config
 /*
@@ -24,7 +24,7 @@ public class Main {
             //get query parsing result -> to result file
             QueryParser queryParser = new QueryParser();
             //queryParser.getQueryStatics(); //from Local
-            queryParser.getQueryStaticsFromHdfsFile(); //from HDFS
+            queryParser.getQueryStaticsFromApplicationLogFile(); //from HDFS
 
             //TODO: write to hive table (DruidLineageRecordOrcWriter)
 
@@ -42,14 +42,14 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
+
 */
 
 
-/*
         try {
 
             QueryPopularity queryPopularity = new QueryPopularity();
-            queryPopularity.getQueryStaticsFromHdfsFile();
+            queryPopularity.getQueryStaticsFromApplicationLogFile();
 
             //TODO: write to hive table (DruidLineageRecordOrcWriter)
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
@@ -66,7 +66,7 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
-*/
+
 
 //        GetLineage lineage = new GetLineage();
 //        lineage.makeLineageInfos("test string");

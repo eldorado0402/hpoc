@@ -13,6 +13,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
+
 
 import org.apache.commons.io.IOUtils;
 
@@ -215,48 +223,46 @@ public class MakeJsonLogSample {
         }
     }
 
-    public void readApplicationLogFile() {
+    public ArrayList<String> readApplicationLogFile() {
 
         FileWriter writer = null;
-        FileInputStream input = null;
+        InputStream inStream = null;
+        File file = null;
+        ArrayList<String> sqls = new ArrayList<String>();;
 
         try {
 
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            File file = new File(sqlConfiguration.get("test_input_filename"));
-            writer = new FileWriter(file, true);
+            file = new File(sqlConfiguration.get("application_log_filename"));
+            inStream = new FileInputStream(file);
+            String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
 
-            List <List <String>> records = new ArrayList <List <String>>();
-            // FileInputStream 는 File object를 생성자 인수로 받을 수 있다.
-//            input = new FileInputStream(new File("/Users/eldorado0402/Downloads/zip/result.txt"));
-//            int i = 0;
-//            while((i = input.read()) != -1) {
-//                System.out.write(i);
-//
-//            }
+            Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}",Pattern.DOTALL);//[sfx] query ~ next line 로그
+            Matcher matcher = MY_PATTERN.matcher(logs);
 
-            InputStream inStream = new FileInputStream("/Users/eldorado0402/Downloads/zip/result.txt");
-            String body = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
-            System.out.println(body);
+            while (matcher.find()) {
+                sqls.add(matcher.group(1));
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
+                if(inStream != null){
+                    inStream.close();
+                }
+
                 if (writer != null) {
                     writer.close();
                 }
-
-                if(input != null){
-                    input.close();
-                }
-
             } catch (IOException e) {
                 logger.info(e.getMessage());
             }
 
         }
+        return sqls;
     }
 
 
