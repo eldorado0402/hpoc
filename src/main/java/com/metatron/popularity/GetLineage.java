@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import net.sf.jsqlparser.statement.insert.*;
+
+
 public class GetLineage {
 
     final static String defalutSchema = "polaris_dev";
@@ -27,7 +30,7 @@ public class GetLineage {
 
     public ArrayList <LineageInfo> makeLineageInfos(String sql) {
         //for test
-        sql = getSQL();
+//        sql = getSQL();
 
         Statement statement;
         QueryParser parser = new QueryParser();
@@ -402,31 +405,31 @@ public class GetLineage {
 //                "join book_tree b\n" +
 //                "on b.book_ancestor = a.id";
 
-//        String sql="SELECT description as d FROM information_schema.CHARACTER_SETS";
+        String sql="SELECT description as d FROM information_schema.CHARACTER_SETS";
 
-        String sql ="SELECT A.PART_ID,\n" +
-                "   B.part_name,\n" +
-                "   A.numRows,\n" +
-                "   A.totalSize,\n" +
-                "   B.create_time,\n" +
-                "   FROM_UNIXTIME(B.create_time)\n" +
-                "FROM \n" +
-                " (SELECT part_id,\n" +
-                "   (SELECT param_value FROM PARTITION_PARAMS WHERE param_key = 'numRows' AND part_id = t1.part_id) AS numRows, \n" +
-                "   (SELECT param_value FROM PARTITION_PARAMS WHERE param_key = 'totalSize' AND part_id = t1.part_id) AS totalSize\n" +
-                "   FROM PARTITION_PARAMS AS t1\n" +
-                "   WHERE t1.PART_ID IN \n" +
-                "    (SELECT PART_ID\n" +
-                "    FROM PARTITIONS\n" +
-                "    WHERE TBL_ID =\n" +
-                "     (SELECT A.TBL_ID\n" +
-                "     FROM TBLS AS A, DBS AS B\n" +
-                "     WHERE A.DB_ID = B.DB_ID\n" +
-                "       AND B.NAME = 'default'\n" +
-                "       AND A.TBL_NAME = 'sample_ingestion_partitions' ) )\n" +
-                "     GROUP BY part_id ) AS A, PARTITIONS AS B\n" +
-                "WHERE A.PART_ID=B.PART_ID\n" +
-                "ORDER BY b.PART_NAME desc";
+//        String sql ="SELECT A.PART_ID,\n" +
+//                "   B.part_name,\n" +
+//                "   A.numRows,\n" +
+//                "   A.totalSize,\n" +
+//                "   B.create_time,\n" +
+//                "   FROM_UNIXTIME(B.create_time)\n" +
+//                "FROM \n" +
+//                " (SELECT part_id,\n" +
+//                "   (SELECT param_value FROM PARTITION_PARAMS WHERE param_key = 'numRows' AND part_id = t1.part_id) AS numRows, \n" +
+//                "   (SELECT param_value FROM PARTITION_PARAMS WHERE param_key = 'totalSize' AND part_id = t1.part_id) AS totalSize\n" +
+//                "   FROM PARTITION_PARAMS AS t1\n" +
+//                "   WHERE t1.PART_ID IN \n" +
+//                "    (SELECT PART_ID\n" +
+//                "    FROM PARTITIONS\n" +
+//                "    WHERE TBL_ID =\n" +
+//                "     (SELECT A.TBL_ID\n" +
+//                "     FROM TBLS AS A, DBS AS B\n" +
+//                "     WHERE A.DB_ID = B.DB_ID\n" +
+//                "       AND B.NAME = 'default'\n" +
+//                "       AND A.TBL_NAME = 'sample_ingestion_partitions' ) )\n" +
+//                "     GROUP BY part_id ) AS A, PARTITIONS AS B\n" +
+//                "WHERE A.PART_ID=B.PART_ID\n" +
+//                "ORDER BY b.PART_NAME desc";
 
         return sql;
     }

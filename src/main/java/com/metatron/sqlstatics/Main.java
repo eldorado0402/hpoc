@@ -10,15 +10,16 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //make sample
+        MakeJsonLogSample sample = new MakeJsonLogSample();
+
+//        sample.makeSample();
+        sample.readApplicationLogFile();
+
 
         //read config
 /*
         try {
-
-            MakeJsonLogSample sample = new MakeJsonLogSample();
-            //make sample
-//            sample.makeSample();
-//            sample.makeSampleFromCsvFile();
 
             //get query parsing result -> to result file
             QueryParser queryParser = new QueryParser();
@@ -41,8 +42,8 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
-
 */
+
 
 /*
         try {
@@ -65,10 +66,10 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
-
 */
-        GetLineage lineage = new GetLineage();
-        lineage.makeLineageInfos("test string");
+
+//        GetLineage lineage = new GetLineage();
+//        lineage.makeLineageInfos("test string");
     }
 
 

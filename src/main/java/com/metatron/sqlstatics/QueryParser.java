@@ -10,6 +10,7 @@ import net.sf.jsqlparser.statement.drop.Drop;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.upsert.Upsert;
+import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -426,7 +427,7 @@ public class QueryParser {
             //Table name
             target = merge.getTable().getName();
 
-        } else if (type == SqlType.UPSERT) {
+        }else if (type == SqlType.UPSERT) {
             Upsert upsert = (Upsert) statement;
             //Table name
             target = upsert.getTable().getName();

@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.IOUtils;
 
 public class MakeJsonLogSample {
 
@@ -149,6 +152,113 @@ public class MakeJsonLogSample {
 
         }
     }
+
+
+
+    //Input File Read
+    public void makeSampleFromTextFile() {
+        FileWriter writer = null;
+        CSVReader csvReader = null;
+
+        try {
+
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            File file = new File(sqlConfiguration.get("test_input_filename"));
+            writer = new FileWriter(file, true);
+
+            List <List <String>> records = new ArrayList <List <String>>();
+            //csvReader = new CSVReader(new FileReader("/Users/eldorado0402/Downloads/zip/result.txt"));
+            FileReader filereader = new FileReader("/Users/eldorado0402/Downloads/zip/result.txt");
+            BufferedReader bufReader = new BufferedReader(filereader);
+            String line = "";
+            String[] values = null;
+            while ((line = bufReader.readLine()) != null){
+                //System.out.println(Arrays.asList(values).get(1));
+
+                JSONObject log = new JSONObject();
+
+                log.put("cluster",  "localhost");
+                log.put("createTime", System.currentTimeMillis());
+                log.put("sqlId",UUID.randomUUID().toString());
+                log.put("engineType", sqlConfiguration.get("engineType"));
+                log.put("sql", line);
+
+                writer.write(log.toString());
+                writer.write("\n");
+
+                writer.flush();
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+
+            } catch (IOException e) {
+                logger.info(e.getMessage());
+            }
+
+            try {
+                if (csvReader != null) {
+                    csvReader.close();
+                }
+            } catch (IOException e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+    }
+
+    public void readApplicationLogFile() {
+
+        FileWriter writer = null;
+        FileInputStream input = null;
+
+        try {
+
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+
+            File file = new File(sqlConfiguration.get("test_input_filename"));
+            writer = new FileWriter(file, true);
+
+            List <List <String>> records = new ArrayList <List <String>>();
+            // FileInputStream 는 File object를 생성자 인수로 받을 수 있다.
+//            input = new FileInputStream(new File("/Users/eldorado0402/Downloads/zip/result.txt"));
+//            int i = 0;
+//            while((i = input.read()) != -1) {
+//                System.out.write(i);
+//
+//            }
+
+            InputStream inStream = new FileInputStream("/Users/eldorado0402/Downloads/zip/result.txt");
+            String body = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+            System.out.println(body);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+
+                if(input != null){
+                    input.close();
+                }
+
+            } catch (IOException e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+    }
+
 
 
     private ArrayList <String> getORACLEQueryList() {

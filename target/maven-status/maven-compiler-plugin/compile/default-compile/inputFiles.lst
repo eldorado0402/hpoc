@@ -1,6 +1,14 @@
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/SQLConfiguration.java
-/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/Main.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/MetadataInfo.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/ColumnsFinder.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/GetLineage.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/DruidPopularityRecordOrcWriter.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/LineageInfo.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/QueryParser.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/QueryInfo.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/Main.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/QueryPopularity.java
+/Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/popularity/PopularityDataRecord.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java
 /Users/eldorado0402/workspace/oracle_lineage2/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java
