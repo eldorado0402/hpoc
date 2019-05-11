@@ -267,7 +267,7 @@ public class MakeJsonLogSample {
 
 
 
-    private ArrayList <String> getORACLEQueryList() {
+    public ArrayList <String> getORACLEQueryList() {
         ArrayList <String> queryList = new ArrayList <String>();
 
         String sql1 = "Select 1 from sk_wip_hst_r2r   Where lot_id = :v_lotid     and   msg_id = :v_msg_id";

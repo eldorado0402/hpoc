@@ -4,9 +4,7 @@ package com.metatron.popularity;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
 
@@ -17,6 +15,7 @@ public class ColumnsFinder extends TablesNamesFinder {
     private static final String NOT_SUPPORTED_YET = "Not supported yet.";
     private Map <String, String> selectItem = new HashMap <String, String>();
     private ArrayList <PlainSelect> selectBodyLists = new ArrayList <PlainSelect>();
+    private ArrayList<SubSelect> subSelectBodyLists = new ArrayList <SubSelect>();
     private ArrayList <MetadataInfo> tables; // table name, table alias
     private boolean allowColumnProcessing = false;
     private List <String> otherItemNames;
@@ -62,13 +61,13 @@ public class ColumnsFinder extends TablesNamesFinder {
             }
         }
 
-//        if (plainSelect.getWhere() != null) {
-//            plainSelect.getWhere().accept(this);
-//        }
-//
-//        if (plainSelect.getHaving() != null) {
-//            plainSelect.getHaving().accept(this);
-//        }
+        if (plainSelect.getWhere() != null) {
+            plainSelect.getWhere().accept(this);
+        }
+
+        if (plainSelect.getHaving() != null) {
+            plainSelect.getHaving().accept(this);
+        }
 
         if (plainSelect.getOracleHierarchical() != null) {
             plainSelect.getOracleHierarchical().accept(this);
@@ -82,10 +81,16 @@ public class ColumnsFinder extends TablesNamesFinder {
         return this.selectBodyLists;
     }
 
-    public ArrayList <MetadataInfo>getTableInfoList(Expression expr) {
+    public ArrayList <MetadataInfo> getTableInfoList(Expression expr) {
         this.init(true);
         expr.accept(this);
         return this.tables;
+    }
+
+    public ArrayList<SubSelect> getSubSelectLists(Statement statement) {
+        this.init(true);
+        statement.accept(this);
+        return this.subSelectBodyLists;
     }
 
     @Override
@@ -105,6 +110,24 @@ public class ColumnsFinder extends TablesNamesFinder {
         }
 
     }
+
+    @Override
+    public void visit(SubSelect subSelect) {
+
+        this.subSelectBodyLists.add(subSelect);
+
+        if (subSelect.getWithItemsList() != null) {
+            Iterator var2 = subSelect.getWithItemsList().iterator();
+
+            while(var2.hasNext()) {
+                WithItem withItem = (WithItem)var2.next();
+                withItem.accept(this);
+            }
+        }
+
+        subSelect.getSelectBody().accept(this);
+    }
+
 
 
     protected void init(boolean allowColumnProcessing) {

@@ -7,6 +7,8 @@ public class LineageInfo {
     String columnAlias;
     String schema;
     int depth;
+    String selectAlias;
+    String expression;
 
 
     //getta
@@ -70,6 +72,26 @@ public class LineageInfo {
         this.depth = depth;
     }
 
+    //getta
+    public String getSelectAlias() {
+        return selectAlias;
+    }
+
+    //setta
+    public void setSelectAlias(String selectAlias) {
+        this.selectAlias = selectAlias;
+    }
+
+    //getta
+    public String getExpression() {
+        return expression;
+    }
+
+    //setta
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
 
     public String toString() {
         return "LineageInfo{" +
@@ -78,6 +100,8 @@ public class LineageInfo {
                 ", tableAlias='" + tableAlias + '\'' +
                 ", column='" + column + '\'' +
                 ", columnAlias=" + columnAlias + '\'' +
+                ", expression='" + expression + '\'' +
+                ", selectAlias=" + selectAlias + '\'' +
                 ", depth =" + depth +
                 '}';
     }

@@ -45,7 +45,7 @@ public class Main {
 
 */
 
-
+/*
         try {
 
             QueryPopularity queryPopularity = new QueryPopularity();
@@ -66,10 +66,17 @@ public class Main {
             //System.out.println(e);
             logger.error(e.getMessage());
         }
+*/
 
+        GetLineage lineage = new GetLineage();
 
-//        GetLineage lineage = new GetLineage();
-//        lineage.makeLineageInfos("test string");
+        MakeJsonLogSample sample = new MakeJsonLogSample();
+
+        int index=0;
+        for( String sql : sample.getORACLEQueryList() ) {
+            System.out.println("index : " +index++);
+            lineage.makeLineageInfos(sql);
+        }
     }
 
 
