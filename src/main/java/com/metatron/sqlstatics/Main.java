@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.metatron.popularity.*;
 
+import java.util.ArrayList;
+
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -69,14 +71,17 @@ public class Main {
 */
 
         GetLineage lineage = new GetLineage();
+        lineage.makeLineageInfos("test");
 
-        MakeJsonLogSample sample = new MakeJsonLogSample();
+//        MakeJsonLogSample sample = new MakeJsonLogSample();
+//        ArrayList<String> a = sample.getORACLEQueryList();
+//        lineage.makeLineageInfos(a.get(17));
 
-        int index=0;
-        for( String sql : sample.getORACLEQueryList() ) {
-            System.out.println("index : " +index++);
-            lineage.makeLineageInfos(sql);
-        }
+//        int index=0;
+//        for( String sql : sample.getORACLEQueryList() ) {
+//            System.out.println("index : " +index++);
+//            lineage.makeLineageInfos(sql);
+//        }
     }
 
 

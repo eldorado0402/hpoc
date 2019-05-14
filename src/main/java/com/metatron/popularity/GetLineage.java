@@ -2,26 +2,20 @@ package com.metatron.popularity;
 
 import com.metatron.sqlstatics.QueryParser;
 import com.metatron.sqlstatics.SQLConfiguration;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.*;
-import net.sf.jsqlparser.expression.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
-import net.sf.jsqlparser.statement.insert.*;
 
 
 public class GetLineage {
@@ -32,7 +26,7 @@ public class GetLineage {
 
     public ArrayList <LineageInfo> makeLineageInfos(String sql) {
         //for test
-        //sql = getSQL();
+        sql = getSQL();
 
         Statement statement;
         QueryParser parser = new QueryParser();
@@ -44,7 +38,7 @@ public class GetLineage {
 
         //TODO: 대소문자 무시
 
-       try {
+        try {
             statement = CCJSqlParserUtil.parse(sql);
             if (parser.getSqlType(sql, statement) == QueryParser.SqlType.SELECT) {
 
@@ -52,7 +46,7 @@ public class GetLineage {
                 ArrayList <PlainSelect> selectLists = info.getSelectList(statement);
                 //r각자 accept 구문이 있어서 그런데 accept 구분을 한개로 통일하던가 아니면 아래처럼 새로 객체를 생성해야 함
                 ColumnsFinder subinfo = new ColumnsFinder();
-                ArrayList<SubSelect> subSelectLists = subinfo.getSubSelectLists(statement);
+                ArrayList <SubSelect> subSelectLists = subinfo.getSubSelectLists(statement);
                 //System.out.println(subSelectLists);
 
                 int listsize = selectLists.size();
@@ -65,20 +59,8 @@ public class GetLineage {
                     List <SelectItem> list = selectList.getSelectItems();
 
                     //System.out.println(selectList);
-
                     //sub query depth
-                    String selectAlias= null; //for select 문의 전체 alias
-                    // TODO: 2depth 차이가 나지 않음. 그냥 같은 거 골라야 함
-
-                    for(SubSelect subSelect : subSelectLists ) {
-                        if (selectList.toString().equals(subSelect.getSelectBody())) {
-                            if (subSelect.getAlias() != null) {
-                                selectAlias = subSelect.getAlias().getName();
-                                continue;
-                            }
-                        }
-                    }
-
+                    String selectAlias = getSelectAliasName(subSelectLists, selectList.toString());
 
                     //get source table
                     ColumnsFinder tablesInfoFinder = new ColumnsFinder();
@@ -95,64 +77,9 @@ public class GetLineage {
                             //이전 리니지 정보는 이미 저장되어 있으므로 다시 가지고 올 필요는 없어 보임...
 
                             if (selectItem instanceof AllTableColumns) {
-                                String table=null;
-                                String schema=null;
-                                table = ((AllTableColumns) selectItem).getTable().getName();
-                                schema = ((AllTableColumns) selectItem).getTable().getSchemaName();
-                                //schema 가 없으면 source 테이블의 동일 테이블의 schema 정보를 읽어 옮
-                                if (schema == null) {
-                                    // schema = getKey(sourceTableInfos, table).get(0);
-                                    schema = metadata.searchSchemaName(sources, table);
-                                }
+                                Table table = ((AllTableColumns) selectItem).getTable();
 
-                                //테이블 이름이 alias 명인지 체크
-                                if (metadata.checkTable(sources, table) == null) {
-                                    MetadataInfo tableInfo = metadata.checkTableAlias(sources, table);
-                                    if (tableInfo != null) {
-                                        schema = tableInfo.getSchema();
-                                        //schema = tableInfo.getSchema() != null ? tableInfo.getSchema() : defalutSchema;;
-                                        table = tableInfo.getTable();
-                                    }else{//subListAlias
-                                        ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-                                        for(LineageInfo lineageinfo : lineageLists){
-                                            if(lineageinfo.getSelectAlias() !=null &&lineageinfo.getSelectAlias().equalsIgnoreCase(table)){
-                                                LineageInfo newinfo = new LineageInfo();
-
-                                                newinfo.setColumn(lineageinfo.getColumn());
-                                                newinfo.setTable(lineageinfo.getTable());
-
-//                                                if(((SelectExpressionItem) selectItem).getAlias() != null)
-//                                                    newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                                newinfo.setDepth(depth);
-                                                newinfo.setSchema(lineageinfo.getSchema());
-                                                newinfo.setExpression(selectItem.toString());
-                                                newinfo.setSelectAlias(selectAlias);
-
-                                                newinfos.add(newinfo);
-
-                                            }
-
-                                        }
-
-                                        lineageLists.addAll(newinfos);
-                                        continue;
-
-                                    }
-
-                                }
-
-                                //테이블과 db명으로 컬럼 정보를 가지고 옮
-                                ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
-                                //TODO: 테이블 이름인지 ... 테이블 alias 인지... 아니면 이전 서브 쿼리의 alias 인지 확인해야 함
-                                if(cols.size() > 0) {
-                                    setLineageLists(cols, table, depth, schema, selectItem.toString(),selectAlias);
-                                }else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
-                                    cols.add(((AllTableColumns) selectItem).toString().split("\\.")[1]);
-                                    setLineageLists(cols, table, depth, schema,selectItem.toString(),selectAlias);
-                                }
-
-
+                                addAllColumnsLineageListByTableType(sources, table, selectAlias, depth, selectItem);
                             } else if (selectItem instanceof AllColumns) {
                                 if (lineageLists.size() == 0) {
                                     //select 문이 없는 최하위 select 문 이므로 소스 테이블의 모든 컬럼을 추가
@@ -160,186 +87,34 @@ public class GetLineage {
                                     for (MetadataInfo source : sources) {
                                         String table = source.getTable();
                                         String schema = source.getSchema();
-                                        ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
 
-                                        if(cols.size() > 0) {
-                                            setLineageLists(cols, table, depth, schema,selectItem.toString(),selectAlias);
-                                        }
-                                        else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
-                                            cols.add(((AllColumns) selectItem).toString());
-                                            setLineageLists(cols, table, depth, schema,selectItem.toString(),selectAlias);
-                                        }
-
+                                        searchAllColumnsAndAddLineageList(schema, table, selectAlias, depth, selectItem);
                                     }
-
                                 } else { //* 을 선택하고 최하위 select 문이 아닌 경우
 
-
                                     if (selectList.getFromItem() != null) {
-                                        if (selectList.getFromItem().getClass().getSimpleName().equals("Table")) {
+                                        if (selectList.getFromItem() instanceof Table) {
                                             //from 테이블의 meta를 추가함
-                                            boolean subAliasFlag=false;
-
-                                            String schema = ((Table) selectList.getFromItem()).getSchemaName();
-                                            String table = ((Table) selectList.getFromItem()).getName();
-
-                                            //TODO: 테이블이 메타에 있나 없나 체크 해야 함... 없으면 alias 임
-                                            if (metadata.checkTable(sources, table) == null) {
-                                                MetadataInfo tableInfo = metadata.checkTableAlias(sources, table);
-                                                if (tableInfo != null) {
-                                                    schema = tableInfo.getSchema();
-                                                    //schema = tableInfo.getSchema() != null ? tableInfo.getSchema() : defalutSchema;;
-                                                    table = tableInfo.getTable();
-                                                }else{
-                                                    for (LineageInfo lineageinfo : lineageLists){
-                                                        if(lineageinfo.getSelectAlias() !=null && lineageinfo.getSelectAlias().equalsIgnoreCase(table))
-                                                            subAliasFlag = true;
-                                                    }
-                                                }
-
-                                            }
-
-                                            if(subAliasFlag ==true){
-                                                ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-                                                for(LineageInfo lineageinfo : lineageLists){
-                                                    if(lineageinfo.getSelectAlias() !=null && lineageinfo.getSelectAlias().equalsIgnoreCase(table)){
-                                                        LineageInfo newinfo = new LineageInfo();
-
-                                                        newinfo.setColumn(lineageinfo.getColumn());
-                                                        newinfo.setTable(lineageinfo.getTable());
-
-//                                                        if(((SelectExpressionItem) selectItem).getAlias() != null)
-//                                                            newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                                        newinfo.setDepth(depth);
-                                                        newinfo.setSchema(lineageinfo.getSchema());
-                                                        newinfo.setExpression(selectItem.toString());
-                                                        newinfo.setSelectAlias(selectAlias);
-
-                                                        newinfos.add(newinfo);
-
-                                                    }
-
-                                                }
-
-                                                lineageLists.addAll(newinfos);
-
-                                            }else{
-
-                                                ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
-                                                //setLineageLists(cols, table, depth, schema);
-
-                                                if(cols.size() > 0) {
-                                                    setLineageLists(cols, table, depth, schema,selectItem.toString(), selectAlias);
-                                                }
-                                                else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
-                                                    cols.add(((AllColumns) selectItem).toString());
-                                                    setLineageLists(cols, table, depth, schema,selectItem.toString(), selectAlias);
-                                                }
-                                            }
-
+                                            Table table = (Table) selectList.getFromItem();
+                                            addAllColumnsLineageListByTableType(sources, table, selectAlias, depth, selectItem);
                                         }
                                     }
 
-
                                     if (selectList.getJoins() != null) {
-                                        System.out.println(selectList.getJoins().toString());
+                                        //System.out.println(selectList.getJoins().toString());
                                         for (Join join : selectList.getJoins()) {
                                             if (join.getRightItem() != null) {
                                                 //join.getRightItem() 가 table 형태
-                                                if (join.getRightItem().getClass().getSimpleName().equals("Table")) {
-
-                                                    boolean subAliasFlag=false;
-                                                    String schema = ((Table) selectList.getFromItem()).getSchemaName();
-                                                    String table = ((Table) join.getRightItem()).getName();
-
-                                                    if (metadata.checkTable(sources, table) == null) {
-                                                        MetadataInfo tableInfo = metadata.checkTableAlias(sources, table);
-                                                        if (tableInfo != null) {
-                                                            schema = tableInfo.getSchema();
-                                                            //schema = tableInfo.getSchema() != null ? tableInfo.getSchema() : defalutSchema;;
-                                                            table = tableInfo.getTable();
-                                                        }else{
-                                                            for (LineageInfo lineageinfo : lineageLists){
-                                                                if(lineageinfo.getSelectAlias() !=null && lineageinfo.getSelectAlias().equalsIgnoreCase(table))
-                                                                    subAliasFlag = true;
-                                                            }
-                                                        }
-
-                                                    }
-
-
-                                                    if(subAliasFlag ==true){
-                                                        ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-                                                        for(LineageInfo lineageinfo : lineageLists){
-                                                            if(lineageinfo.getSelectAlias() !=null && lineageinfo.getSelectAlias().equalsIgnoreCase(table)){
-                                                                LineageInfo newinfo = new LineageInfo();
-
-                                                                newinfo.setColumn(lineageinfo.getColumn());
-                                                                newinfo.setTable(lineageinfo.getTable());
-
-//                                                                if(((SelectExpressionItem) selectItem).getAlias() != null)
-//                                                                    newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                                                newinfo.setDepth(depth);
-                                                                newinfo.setSchema(lineageinfo.getSchema());
-                                                                newinfo.setExpression(selectItem.toString());
-                                                                newinfo.setSelectAlias(selectAlias);
-
-                                                                newinfos.add(newinfo);
-
-                                                            }
-
-                                                        }
-
-                                                        lineageLists.addAll(newinfos);
-
-                                                    }else{
-
-                                                        ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
-                                                        //setLineageLists(cols, table, depth, schema);
-
-                                                        if(cols.size() > 0) {
-                                                            setLineageLists(cols, table, depth, schema,selectItem.toString(), selectAlias);
-                                                        }
-                                                        else{ // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
-                                                            cols.add(((AllColumns) selectItem).toString());
-                                                            setLineageLists(cols, table, depth, schema,selectItem.toString(), selectAlias);
-                                                        }
-                                                    }
-
+                                                if (join.getRightItem() instanceof Table) {
+                                                    Table table = (Table) join.getRightItem();
+                                                    addAllColumnsLineageListByTableType(sources, table, selectAlias, depth, selectItem);
                                                 }
-
                                             }
-
                                         }
 
                                     }
-
                                     //이전 depth 의 lineage 의 select 구문 모두
-                                    ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-
-                                    for (LineageInfo lineageinfo : lineageLists) {
-                                        if (lineageinfo.depth == (depth - 1)) {
-                                            LineageInfo newinfo = new LineageInfo();
-                                            newinfo.setColumn(lineageinfo.getColumn());
-                                            newinfo.setTable(lineageinfo.getTable());
-                                            //newinfo.setTableAlias(lineageinfo.getTableAlias());
-
-                                            newinfo.setDepth(depth);
-                                            newinfo.setSchema(lineageinfo.getSchema());
-                                            newinfo.setExpression(selectItem.toString());
-                                            newinfo.setSelectAlias(selectAlias);
-
-                                            newinfos.add(newinfo);
-
-                                        }
-
-                                    }
-
-                                    lineageLists.addAll(newinfos);
-
-
+                                    addPreviousLineageList(depth, selectItem, selectAlias);
                                 }
 
                             }
@@ -347,498 +122,197 @@ public class GetLineage {
                         } else if (selectItem instanceof SelectExpressionItem) {
 
                             String col_name = null;
-                            String table_name = null;
-                            String schema_name = null;
-                            LineageInfo lineageinfo = new LineageInfo();
+                            String tableName = null;
+                            String tableAliasName = null;
+                            String schemaName = null;
+                            String colAliasName = null;
+                            TableNameType type = null;
+                            //LineageInfo lineageinfo = new LineageInfo();
 
                             //expression 경우 alias 를 여기서 떼어야 할거 같은데...
 //                            if (((SelectExpressionItem) selectItem).getExpression().getClass().getSimpleName().equals("Column")) {
                             if (((SelectExpressionItem) selectItem).getExpression() instanceof Column) {
-                                boolean subAliasFlag=false;
                                 col_name = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getColumnName();
 
                                 if (((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable() != null) {
-                                    table_name = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getName();
-                                    schema_name = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getSchemaName();
-
+                                    tableName = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getName();
+                                    schemaName = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getSchemaName();
                                     //테이블 이름이 alias 명인지 체크
-                                    if (metadata.checkTable(sources, table_name) == null) {
-                                        MetadataInfo tableInfo = metadata.checkTableAlias(sources, table_name);
-                                        if (tableInfo != null) {
-                                            schema_name = tableInfo.getSchema();
-                                            //schema = tableInfo.getSchema() != null ? tableInfo.getSchema() : defalutSchema;;
-                                            table_name = tableInfo.getTable();
-                                        }else{
-                                            for (LineageInfo lineage : lineageLists){
-                                                if( lineage.getSelectAlias() !=null && lineage.getSelectAlias().equalsIgnoreCase(table_name))
-                                                    subAliasFlag = true;
-                                            }
-                                        }
-                                    }
+                                    type = getTableNameType(sources, tableName);
 
                                 }
-
                                 //TODO : 컬럼 정보가 MDM에 있는지 없는지 체크
-                                if (subAliasFlag==false && getMetadataByMDM(col_name, schema_name, table_name, SearchType.Column).size() > 0) {
+                                if ((type == TableNameType.Table || type == TableNameType.TableAlias)
+                                        && getMetadataByMDM(col_name, schemaName, tableName, SearchType.Column).size() > 0) {
 
+                                    MetadataInfo table = null;
                                     //schema 정보가 문제임
                                     //TODO : checkTable 새로 만들어야 함 getMetadataByMDM 결과가 리스트로 옮
-                                    MetadataInfo table = metadata.checkTable(sources, schema_name, getMetadataByMDM(col_name, schema_name, table_name, SearchType.Table));
+                                    //TODO: 여기 로직이 좀 이상함.....TableAlias 일때
+                                    if (type == TableNameType.Table) {
+                                        table = metadata.checkTable(sources, schemaName, getMetadataByMDM(col_name, schemaName, tableName, SearchType.Table));
+                                    } else if (type == TableNameType.TableAlias) {
+                                        MetadataInfo tableAlias = metadata.checkTableAlias(sources, tableName);
+                                        table = metadata.checkTable(sources, tableAlias.getSchema(), getMetadataByMDM(col_name, tableAlias.getSchema(), tableAlias.getTable(), SearchType.Table));
+                                    }
+                                    //set table & schema
                                     if (table != null) {
-                                        lineageinfo.setTable(table.getTable());
-                                        lineageinfo.setTableAlias(table.getTableAlias());
-                                        if (schema_name != null) {
-                                            lineageinfo.setSchema(schema_name);
-                                        } else if (table.getSchema() != null) {
-                                            lineageinfo.setSchema(table.getSchema());
-                                        } else {
-                                            lineageinfo.setSchema(defalutSchema);
-                                        }
-
+                                        tableName = table.getTable();
+                                        tableAliasName = table.getTableAlias();
+                                        schemaName = schemaName != null ? schemaName : table.getSchema();
                                     }
 
-                                    lineageinfo.setColumn(col_name);
-
-                                    if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                        lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                    }
-
-                                    lineageinfo.setDepth(depth);
-
-                                    lineageinfo.setSelectAlias(selectAlias);
-                                    lineageinfo.setExpression(selectItem.toString());
-
-
+                                    this.lineageLists.add(setLineageInfo(schemaName, tableName, tableAliasName, col_name, depth, selectAlias, selectItem));
 
                                 } else { //TODO:metadata에 정보가 없는 경우..... 이전 쿼리에서 정보가 있는 경우라고 볼수 있음
                                     //TODO: lineagelist 에 정보가 있는지 체크
+                                    boolean previousExistFlag = false;
+
+                                    ArrayList<LineageInfo> newinfos = new ArrayList<LineageInfo>();
+
                                     for (LineageInfo colinfo : lineageLists) {
-                                        if(subAliasFlag ==true && table_name.equalsIgnoreCase(colinfo.getSelectAlias()) &&
-                                                (colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(col_name)) ||
-                                                (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(col_name))){
+                                        if (type == TableNameType.SelectAlias && tableName.equalsIgnoreCase(colinfo.getSelectAlias()) &&
+                                                ((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(col_name)) ||
+                                                (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(col_name)))) {
 
-                                            lineageinfo.setColumn(col_name);
-                                            lineageinfo.setTable(colinfo.getTable());
-                                            //lineageinfo.setTableAlias(colinfo.getTableAlias());
+                                            newinfos.add(setLineageInfo(colinfo.getSchema(), colinfo.getTable(), null, col_name, depth, selectAlias, selectItem));
+                                            previousExistFlag = true;
 
-                                            if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                                lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                            }
-
-                                            lineageinfo.setSchema(colinfo.getSchema());
-                                            lineageinfo.setDepth(depth);
-
-                                            lineageinfo.setSelectAlias(selectAlias);
-                                            lineageinfo.setExpression(selectItem.toString());
-
-                                        } else if((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(col_name)) ||
-                                                (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(col_name))) {
+                                        } else if (type == TableNameType.Table && tableName.equalsIgnoreCase(colinfo.getTable()) &&
+                                                ((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(col_name)) ||
+                                                (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(col_name)))) {
                                             //TODO: colinfo.getColumn() or col_name 중에 어느것이 더 나은지 결정해야 함
                                             //lineageinfo.setColumn(colinfo.getColumn());
-                                            lineageinfo.setColumn(col_name);
-                                            lineageinfo.setTable(colinfo.getTable());
-                                            lineageinfo.setTableAlias(colinfo.getTableAlias());
-
-                                            if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                                lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                            }
-
-                                            lineageinfo.setSchema(colinfo.getSchema());
-                                            lineageinfo.setDepth(depth);
-
-                                            lineageinfo.setSelectAlias(selectAlias);
-                                            lineageinfo.setExpression(selectItem.toString());
-
+                                            newinfos.add(setLineageInfo(colinfo.getSchema(), colinfo.getTable(), colinfo.getTableAlias(), col_name, depth, selectAlias, selectItem));
+                                            previousExistFlag = true;
                                         }
 
                                     }
 
                                     //이전 쿼리에도 정보가 없는 경우 그냥 테이블과 컬럼 정보 set
-                                    if( lineageinfo.getColumn() == null && lineageinfo.getTable() == null){
-                                        lineageinfo.setColumn(col_name);
+                                    if (previousExistFlag == false) {
 
-                                        if(table_name !=null) {
-                                            lineageinfo.setTable(table_name);
-                                        }else{ //TODO:hynix 용 추가 로직
-//                                            if(sources.size()==1){
-//                                                lineageinfo.setTable(sources.get(0).getTable().toString());
-//                                            }
-                                            if (selectList.getFromItem() != null) {
-                                                if (selectList.getFromItem() instanceof Table){
-                                                    //lineageinfo.setTable(((Table)selectList.getFromItem()).getName());
-
-                                                    if (metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()) == null) {
-                                                        MetadataInfo tableInfo = metadata.checkTableAlias(sources, ((Table)selectList.getFromItem()).getName());
-                                                        if (tableInfo != null) {
-                                                            lineageinfo.setTable(tableInfo.getTable());
-                                                            lineageinfo.setSchema(tableInfo.getSchema());
-                                                        }
-                                                    }else{
-                                                        lineageinfo.setTable(metadata.checkTable(sources ,  ((Table)selectList.getFromItem()).getName()).getTable());
-                                                        lineageinfo.setSchema(metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()).getSchema());
+                                        //TODO: 테이블 type에 따라서 테이블 이름이 다름
+                                        if (tableName != null) {
+                                            MetadataInfo table = null;
+                                            type = getTableNameType(sources, tableName);
+                                            //TODO: 테이블이 alias 일수도 있음...
+                                            if (type == TableNameType.Table) {
+                                                schemaName = metadata.checkTable(sources, schemaName, tableName).getSchema();
+                                                tableName = metadata.checkTable(sources, schemaName, tableName).getTable();
+                                            } else if (type == TableNameType.TableAlias) {
+                                                schemaName = metadata.checkTableAlias(sources, tableName).getSchema();
+                                                tableName = metadata.checkTableAlias(sources, tableName).getTable();
+                                            } else if(type == TableNameType.SelectAlias){
+                                                for (LineageInfo lineageinfo : lineageLists) {
+                                                    if (lineageinfo.getSelectAlias() != null && lineageinfo.getSelectAlias().equalsIgnoreCase(tableName)) {
+                                                        tableName = lineageinfo.getTable();
+                                                        schemaName = lineageinfo.getSchema();
                                                     }
-
-                                                }else{
-                                                    lineageinfo.setTable(sources.get(0).getTable());
-                                                }
-
+                                                };
                                             }
-                                        }
-                                        if(((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable() != null &&
-                                                ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getAlias()!=null) {
-                                            lineageinfo.setTableAlias(((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getAlias().getName());
+
+                                        } else {
+                                            HashMap <String, String> tableinfo = getFromTableInfo(selectList, sources);
+                                            schemaName = tableinfo.get("schemaName");
+                                            tableName = tableinfo.get("tableName");
                                         }
 
-
-                                        if(((SelectExpressionItem) selectItem).getAlias() != null) {
-                                            lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
+                                        if (((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable() != null &&
+                                                ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getAlias() != null) {
+                                            tableAliasName = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getTable().getAlias().getName();
                                         }
-                                        lineageinfo.setSchema(schema_name);
-                                        lineageinfo.setDepth(depth);
-
-                                        lineageinfo.setSelectAlias(selectAlias);
-                                        lineageinfo.setExpression(selectItem.toString());
+                                        newinfos.add(setLineageInfo(schemaName, tableName, tableAliasName, col_name, depth, selectAlias, selectItem));
                                     }
+
+                                    lineageLists.addAll(newinfos);
                                 }
 
-
-    //                        } else if (((SelectExpressionItem) selectItem).getExpression().getClass().getSimpleName().equalsIgnoreCase("Function")) {
-                              } else if (((SelectExpressionItem) selectItem).getExpression() instanceof  Function) {
+                            } else if (((SelectExpressionItem) selectItem).getExpression() instanceof SubSelect) {
+                                //subselect 문은 select 문에 포함되어 있으므로 ....
+                                continue;
+                            } else {
+                                //else if (((SelectExpressionItem) selectItem).getExpression() instanceof Function) {
                                 //TODO: expression 자체를 넣어야 하는가?... 컬럼만 사용해야 하는가... 컬럼을 뗴어 내는 것은 추후 고려
 
                                 //TODO : Function column 리스트, column에 테이블 정보가 있는지 없는지 체크
-                                ColumnCollectVisitor columnCollect=new ColumnCollectVisitor() ;
-                                List<Column> columns  = columnCollect.getColumns(((SelectExpressionItem) selectItem).getExpression());
+                                ColumnCollectVisitor columnCollect = new ColumnCollectVisitor();
+                                List <Column> columns = columnCollect.getColumns(((SelectExpressionItem) selectItem).getExpression());
+
+                                ArrayList<LineageInfo> newinfos = new ArrayList<LineageInfo>();
 //                                System.out.println("Fuction columns" + columns);
                                 //TODO : 컬럼의 이름을 찾음, 여러개를 다 lineage list에 추가해 주어야 함
-                                if(columns.size() >0 ){
-
-                                    ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-
-                                    for(Column column :columns) {
-
+                                if (columns.size() > 0) {
+                                    for (Column column : columns) {
                                         boolean colFindFlag = false;
 
-                                        for (LineageInfo colinfo : lineageLists) {
+                                        if(column.getTable()!= null)
+                                            type = getTableNameType(sources, column.getTable().getName());
+                                        else
+                                            type = TableNameType.Empty;
 
+                                        for (LineageInfo colinfo : lineageLists) {
                                             //System.out.println(column.getColumnName() + ", " + colinfo.getColumn() + ", " + colinfo.getColumnAlias());
-
-                                            LineageInfo newinfo = new LineageInfo();
-
-                                            if ((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(column.getColumnName())) ||
-                                                    (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(column.getColumnName()))) {
+                                            if (type == TableNameType.Table &&
+                                                    ((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(column.getColumnName())) ||
+                                                    (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(column.getColumnName())))) {
                                                 //TODO: colinfo.getColumn() or col_name 중에 어느것이 더 나은지 결정해야 함
-                                                //lineageinfo.setColumn(colinfo.getColumn());
-                                                newinfo.setColumn(colinfo.getColumn());
-                                                newinfo.setTable(colinfo.getTable());
-                                                newinfo.setTableAlias(colinfo.getTableAlias());
-
-                                                if(((SelectExpressionItem) selectItem).getAlias() != null)
-                                                    newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                                newinfo.setSchema(colinfo.getSchema());
-                                                newinfo.setDepth(depth);
-
-                                                newinfo.setSelectAlias(selectAlias);
-                                                newinfo.setExpression(selectItem.toString());
-
-                                                newinfos.add(newinfo);
-
-                                                colFindFlag =true;
+                                                newinfos.add(setLineageInfo(colinfo.getSchema(), colinfo.getTable(), colinfo.getTableAlias(), colinfo.getColumn()
+                                                        ,  depth, selectAlias, selectItem));
+                                                colFindFlag = true;
 
                                                 continue;
-
                                             }
                                         }
 
-                                        if(colFindFlag==false){
-                                            LineageInfo newinfo = new LineageInfo();
-
-                                            newinfo.setColumn(column.getColumnName());
-
-                                            if(((SelectExpressionItem) selectItem).getAlias() != null)
-                                                newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                            newinfo.setDepth(depth);
-                                            if(column.getTable() != null){
-                                                newinfo.setTable(column.getTable().getName());
-                                                newinfo.setSchema(column.getTable().getSchemaName());
-                                                if(column.getTable().getAlias() != null)
-                                                    newinfo.setTableAlias(column.getTable().getAlias().getName());
-                                                else
-                                                    newinfo.setTableAlias(null);
-                                            }else if(selectList.getFromItem() != null) {
-                                                if (selectList.getFromItem() instanceof Table){
-                                                    //newinfo.setTable(selectList.getFromItem().toString());
-                                                    //newinfo.setTable(((Table)selectList.getFromItem()).getName());
-
-                                                    if (metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()) == null) {
-                                                        MetadataInfo tableInfo = metadata.checkTableAlias(sources, ((Table)selectList.getFromItem()).getName());
-                                                        if (tableInfo != null) {
-                                                            newinfo.setTable(tableInfo.getTable());
-                                                            newinfo.setSchema(tableInfo.getSchema());
+                                        if (colFindFlag == false) {
+                                            if (column.getTable() != null) {
+                                                MetadataInfo table = null;
+                                                //type = getTableNameType(sources, column.getTable().getName());
+                                                //TODO: 테이블이 alias 일수도 있음...
+                                                if (type == TableNameType.Table) {
+                                                    tableName = column.getTable().getName();
+                                                    schemaName = column.getTable().getSchemaName();
+                                                } else if (type == TableNameType.TableAlias) {
+                                                    tableName = metadata.checkTableAlias(sources, column.getTable().getName()).getTable();
+                                                    schemaName = metadata.checkTableAlias(sources, column.getTable().getName()).getSchema();
+                                                } else if(type == TableNameType.SelectAlias){
+                                                    for (LineageInfo lineageinfo : lineageLists) {
+                                                        if (lineageinfo.getSelectAlias() != null && lineageinfo.getSelectAlias().equalsIgnoreCase(column.getTable().getName())) {
+                                                            tableName = lineageinfo.getTable();
+                                                            schemaName = lineageinfo.getSchema();
                                                         }
-                                                    }else{
-                                                        newinfo.setTable(metadata.checkTable(sources ,  ((Table)selectList.getFromItem()).getName()).getTable());
-                                                        newinfo.setSchema(metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()).getSchema());
-                                                    }
-                                                    //TODO:get from table의 스키마
-                                                }else{
-                                                    newinfo.setTable(sources.get(0).getTable());
-                                                    newinfo.setSchema(sources.get(0).getSchema());
+                                                    };
                                                 }
 
+                                                tableAliasName = column.getTable().getAlias() != null ?
+                                                        column.getTable().getAlias().getName() : null;
+                                            } else {
+                                                HashMap <String, String> tableinfo = getFromTableInfo(selectList, sources);
+                                                schemaName = tableinfo.get("schemaName");
+                                                tableName = tableinfo.get("tableName");
                                             }
 
-                                            newinfo.setSelectAlias(selectAlias);
-                                            newinfo.setExpression(selectItem.toString());
-
-                                            newinfos.add(newinfo);
+                                            newinfos.add(setLineageInfo(schemaName, tableName, tableAliasName, column.getColumnName(), depth, selectAlias, selectItem));
                                         }
 
                                     }
-                                    /*
-                                    col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                    lineageinfo.setColumn(col_name);
-                                    if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                        lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                    }
-
-                                    lineageinfo.setDepth(depth);
-                                    lineageinfo.setTable(sources.get(0).getTable());
-                                    lineageinfo.setTableAlias(sources.get(0).getTableAlias());
-                                    lineageinfo.setSchema(sources.get(0).getSchema());
-
-                                    lineageinfo.setSelectAlias(selectAlias);
-                                    lineageinfo.setExpression(selectItem.toString());
-                                    */
                                     lineageLists.addAll(newinfos);
-
                                     continue; // 요기 처리는 끝남 .lineageinfo 는 null값이라서 더해 줄게 없음
 
 
-                                }else{ //Fuction 을 그냥 씀.
+                                } else { //Fuction 을 그냥 씀.
                                     col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                    lineageinfo.setColumn(col_name);
-                                    if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                        lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                    }
 
-                                    lineageinfo.setDepth(depth);
+                                    HashMap <String, String> tableinfo = getFromTableInfo(selectList, sources);
+                                    schemaName = tableinfo.get("schemaName");
+                                    tableName = tableinfo.get("tableName");
 
-                                    if(selectList.getFromItem() != null) {
-                                        if (selectList.getFromItem() instanceof Table){
-                                            // lineageinfo.setTable(((Table)selectList.getFromItem()).getName());
-
-                                            if (metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()) == null) {
-                                                MetadataInfo tableInfo = metadata.checkTableAlias(sources, ((Table)selectList.getFromItem()).getName());
-                                                if (tableInfo != null) {
-                                                    lineageinfo.setTable(tableInfo.getTable());
-                                                    lineageinfo.setSchema(tableInfo.getSchema());
-                                                }
-                                            }else{
-                                                lineageinfo.setTable(metadata.checkTable(sources ,  ((Table)selectList.getFromItem()).getName()).getTable());
-                                                lineageinfo.setSchema(metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()).getSchema());
-                                            }
-
-                                            //TODO:get from table의 스키마
-                                        }else{
-                                            lineageinfo.setTable(sources.get(0).getTable());
-                                            lineageinfo.setSchema(sources.get(0).getSchema());
-                                        }
-
-                                    }
-
-                                    lineageinfo.setSelectAlias(selectAlias);
-                                    lineageinfo.setExpression(selectItem.toString());
-
+                                    lineageLists.add(setLineageInfo(schemaName, tableName, null, col_name, depth, selectAlias, selectItem));
                                 }
-                                /*
-                                col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                lineageinfo.setColumn(col_name);
-                                if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                    lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                }
-
-                                lineageinfo.setDepth(depth);
-                                lineageinfo.setTable(null);
-                                lineageinfo.setTableAlias(null);
-                                lineageinfo.setSchema(null);
-                                */
-
-                            } else if(((SelectExpressionItem) selectItem).getExpression() instanceof SubSelect){
-                                //subselect 문은 select 문에 포함되어 있으므로 ....
-                                continue;
-                            }
-                            else { //selectbody...and so on
-                                /*
-                                col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                lineageinfo.setColumn(col_name);
-
-                                if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                    lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                }
-
-                                lineageinfo.setDepth(depth);
-                                lineageinfo.setTable(null);
-                                lineageinfo.setTableAlias(null);
-                                lineageinfo.setSchema(null);
-                                */
-
-                                ColumnCollectVisitor columnCollect=new ColumnCollectVisitor() ;
-                                List<Column> columns  = columnCollect.getColumns(((SelectExpressionItem) selectItem).getExpression());
-//                                System.out.println("Fuction columns" + columns);
-                                //TODO : 컬럼의 이름을 찾음, 여러개를 다 lineage list에 추가해 주어야 함
-                                if(columns.size() >0 ){
-
-                                    ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
-
-                                    for(Column column :columns) {
-
-                                        boolean colFindFlag = false;
-
-                                        for (LineageInfo colinfo : lineageLists) {
-
-                                            LineageInfo newinfo = new LineageInfo();
-
-                                            if ((colinfo.getColumn() != null && colinfo.getColumn().equalsIgnoreCase(column.getColumnName())) ||
-                                                    (colinfo.getColumnAlias() != null && colinfo.getColumnAlias().equalsIgnoreCase(column.getColumnName()))) {
-                                                //TODO: colinfo.getColumn() or col_name 중에 어느것이 더 나은지 결정해야 함
-                                                //lineageinfo.setColumn(colinfo.getColumn());
-                                                newinfo.setColumn(colinfo.getColumn());
-                                                newinfo.setTable(colinfo.getTable());
-                                                newinfo.setTableAlias(colinfo.getTableAlias());
-
-                                                if(((SelectExpressionItem) selectItem).getAlias() != null)
-                                                    newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                                newinfo.setSchema(colinfo.getSchema());
-                                                newinfo.setDepth(depth);
-
-                                                newinfo.setSelectAlias(selectAlias);
-                                                newinfo.setExpression(selectItem.toString());
-
-                                                newinfos.add(newinfo);
-
-                                                colFindFlag =true;
-
-                                                continue;
-
-                                            }
-                                        }
-
-                                        if(colFindFlag==false){
-                                            LineageInfo newinfo = new LineageInfo();
-
-                                            newinfo.setColumn(column.getColumnName());
-                                            if(((SelectExpressionItem) selectItem).getAlias() != null)
-                                                newinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-
-                                            newinfo.setDepth(depth);
-
-                                            if(column.getTable() != null){
-                                                //TODO: 컬럼이 alias일수 있음
-                                                if (metadata.checkTable(sources, column.getTable().getName()) == null) {
-                                                    MetadataInfo tableInfo = metadata.checkTableAlias(sources, column.getTable().getName());
-                                                    if (tableInfo != null) {
-                                                        newinfo.setTable(tableInfo.getTable());
-                                                        newinfo.setSchema(tableInfo.getSchema());
-                                                    }
-                                                }else{
-                                                    newinfo.setTable(metadata.checkTable(sources, column.getTable().getName()).getTable());
-                                                    newinfo.setSchema(metadata.checkTable(sources, column.getTable().getName()).getSchema());
-                                                }
-                                            }else if(selectList.getFromItem() != null) {
-                                                if (selectList.getFromItem() instanceof Table){
-                                                    //((Table)selectList.getFromItem()).getName();
-
-                                                    if (metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()) == null) {
-                                                        MetadataInfo tableInfo = metadata.checkTableAlias(sources, ((Table)selectList.getFromItem()).getName());
-                                                        if (tableInfo != null) {
-                                                            newinfo.setTable(tableInfo.getTable());
-                                                            newinfo.setSchema(tableInfo.getSchema());
-                                                        }
-                                                    }else{
-                                                        newinfo.setTable(metadata.checkTable(sources ,  ((Table)selectList.getFromItem()).getName()).getTable());
-                                                        newinfo.setSchema(metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()).getSchema());
-
-                                                    }
-
-                                                    //TODO:get from table의 스키마
-                                                }else{
-                                                    newinfo.setTable(sources.get(0).getTable());
-                                                    newinfo.setSchema(sources.get(0).getSchema());
-                                                }
-
-                                            }
-
-
-                                            newinfo.setSelectAlias(selectAlias);
-                                            newinfo.setExpression(selectItem.toString());
-
-                                            newinfos.add(newinfo);
-                                        }
-
-                                    }
-
-                                    /*
-                                    col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                    lineageinfo.setColumn(col_name);
-                                    if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                        lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                    }
-
-                                    lineageinfo.setDepth(depth);
-                                    lineageinfo.setTable(sources.get(0).getTable());
-                                    lineageinfo.setTableAlias(sources.get(0).getTableAlias());
-                                    lineageinfo.setSchema(sources.get(0).getSchema());
-*/
-                                    lineageLists.addAll(newinfos);
-
-                                    continue; // 요기 처리는 끝남 .lineageinfo 는 null값이라서 더해 줄게 없음
-
-
-                                }else{ //Fuction 을 그냥 씀.
-                                    col_name = ((SelectExpressionItem) selectItem).getExpression().toString();
-                                    lineageinfo.setColumn(col_name);
-                                    if (((SelectExpressionItem) selectItem).getAlias() != null) {
-                                        lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
-                                    }
-
-                                    lineageinfo.setDepth(depth);
-
-                                    if(selectList.getFromItem() != null) {
-                                        if (selectList.getFromItem() instanceof Table){
-                                            //lineageinfo.setTable(((Table)selectList.getFromItem()).getName());
-
-                                            if (metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()) == null) {
-                                                MetadataInfo tableInfo = metadata.checkTableAlias(sources, ((Table)selectList.getFromItem()).getName());
-                                                if (tableInfo != null) {
-                                                    lineageinfo.setTable(tableInfo.getTable());
-                                                    lineageinfo.setSchema(tableInfo.getSchema());
-                                                }
-                                            }else{
-                                                lineageinfo.setTable(metadata.checkTable(sources ,  ((Table)selectList.getFromItem()).getName()).getTable());
-                                                lineageinfo.setSchema(metadata.checkTable(sources, ((Table)selectList.getFromItem()).getName()).getSchema());
-
-                                            }
-
-                                            //TODO:get from table의 스키마
-                                        }else{
-                                            lineageinfo.setTable(sources.get(0).getTable());
-                                            lineageinfo.setSchema(sources.get(0).getSchema());
-                                        }
-
-                                    }
-
-                                    lineageinfo.setSelectAlias(selectAlias);
-                                    lineageinfo.setExpression(selectItem.toString());
-
-                                }
-
                             }
 
-                            lineageLists.add(lineageinfo);
+                            //lineageLists.add(lineageinfo);
                         }
 
                     }
@@ -847,16 +321,15 @@ public class GetLineage {
                     listsize--;
                 }
 
-
                 printLineagelist(lineageLists);
                 return lineageLists;
-
 
             }
 
 
         } catch (Exception e) {
             logger.info(e.getMessage());
+            e.printStackTrace();
         }
 
 
@@ -895,6 +368,59 @@ public class GetLineage {
             this.lineageLists.add(lineageinfo);
         }
 
+    }
+
+    //하나만 추가할 때
+    private LineageInfo setLineageInfo(String schema, String table, String tableAlias, String column, int depth, String selectAlias, SelectItem selectItem) {
+        LineageInfo lineageinfo = new LineageInfo();
+
+        lineageinfo.setSchema(schema);
+        lineageinfo.setTable(table);
+        lineageinfo.setTableAlias(tableAlias);
+        lineageinfo.setColumn(column);
+
+        if (((SelectExpressionItem) selectItem).getAlias() != null)
+            lineageinfo.setColumnAlias(((SelectExpressionItem) selectItem).getAlias().getName());
+
+        lineageinfo.setDepth(depth);
+        lineageinfo.setSelectAlias(selectAlias);
+        lineageinfo.setExpression(selectItem.toString());
+
+        return lineageinfo;
+
+        //this.lineageLists.add(lineageinfo);
+
+    }
+
+
+    private HashMap <String, String> getFromTableInfo(PlainSelect selectList, ArrayList <MetadataInfo> sources) {
+        HashMap <String, String> tableInfo = new HashMap <String, String>();
+        MetadataInfo metadata = new MetadataInfo();
+        String tableName = null;
+        String schemaName = null;
+
+        if (selectList.getFromItem() != null) {
+            if (selectList.getFromItem() instanceof Table) {
+                TableNameType fromType = getTableNameType(sources, ((Table) selectList.getFromItem()).getName());
+
+                if (fromType == TableNameType.Table) {
+                    tableName = metadata.checkTable(sources, ((Table) selectList.getFromItem()).getName()).getTable();
+                    schemaName = metadata.checkTable(sources, ((Table) selectList.getFromItem()).getName()).getSchema();
+                } else if (fromType == TableNameType.TableAlias) {
+                    tableName = metadata.checkTableAlias(sources, ((Table) selectList.getFromItem()).getName()).getTable();
+                    schemaName = metadata.checkTableAlias(sources, ((Table) selectList.getFromItem()).getName()).getSchema();
+                }
+            } else {
+                tableName = sources.get(0).getTable();
+                schemaName = sources.get(0).getSchema();
+            }
+
+        }
+
+        tableInfo.put("schemaName", schemaName);
+        tableInfo.put("tableName", tableName);
+
+        return tableInfo;
     }
 
     private String getSQL() {
@@ -940,19 +466,74 @@ public class GetLineage {
 //        String sql="SELECT description as d FROM information_schema.CHARACTER_SETS";
 //
 
-        String sql = "  SELECT a.deptno                  \"Department\", \n" +
-                "         a.num_emp / b.total_count \"Employees\", \n" +
-                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
-                "  FROM   (SELECT deptno, \n" +
-                "                 Count()  num_emp, \n" +
-                "                 SUM(sal) sal_sum \n" +
-                "          FROM   scott.emp \n" +
-                "          WHERE  city = 'NYC' \n" +
-                "          GROUP  BY deptno) a, \n" +
-                "         (SELECT Count()  total_count, \n" +
-                "                 SUM(sal) total_sal \n" +
-                "          FROM   scott.emp \n" +
-                "          WHERE  city = 'NYC') b ";
+//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
+//                "         a.num_emp / b.total_count \"Employees\", \n" +
+//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
+//                "  FROM   (SELECT deptno, \n" +
+//                "                 Count()  num_emp, \n" +
+//                "                 SUM(sal) sal_sum \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC' \n" +
+//                "          GROUP  BY deptno) a, \n" +
+//                "         (SELECT Count()  total_count, \n" +
+//                "                 SUM(sal) total_sal \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC') b ";
+
+//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
+//                "         a.num_emp / b.total_count \"Employees\", \n" +
+//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
+//                "  FROM   (SELECT deptno, \n" +
+//                "                 Count()  num_emp, \n" +
+//                "                 SUM(sal) sal_sum \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC' \n" +
+//                "          GROUP  BY deptno) a, \n" +
+//                "         (SELECT Count()  total_count, \n" +
+//                "                 SUM(sal) total_sal \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC') b ";
+
+//        String sql = "select s.name 학생이름, s.weight 몸무게,\n" +
+//                "\n" +
+//                "     d.dname 학과이름, p.name ||'교수' 교수이름\n" +
+//                "\n" +
+//                "     from student s, department d, professor p\n" +
+//                "\n" +
+//                "     where s.deptno=d.deptno\n" +
+//                "\n" +
+//                "     and s.profno=p.profno(+)\n" +
+//                "\n" +
+//                "     and weight < (select avg(weight)\n" +
+//                "\n" +
+//                "     from student\n" +
+//                "\n" +
+//                "     where deptno=(select deptno\n" +
+//                "\n" +
+//                "     from student\n" +
+//                "\n" +
+//                "     where name='이광훈'))";
+
+//        String sql = "SELECT name, grade, deptno\n" +
+//                "\n" +
+//                "     FROM student\n" +
+//                "\n" +
+//                "     WHERE deptno IN ( SELECT deptno\n" +
+//                "\n" +
+//                "                        FROM department\n" +
+//                "\n" +
+//                "                        WHERE  college = 100)\n";
+
+        String sql = "select b.dept_name, count(*)\n" +
+                "\n" +
+                "     from temp a, tdept b\n" +
+                "\n" +
+                "     where b.dept_code = a.dept_code\n" +
+                "\n" +
+                "     and a.emp_id in (select emp_id from tcom)\n" +
+                "\n" +
+                "     group by b.dept_name\n";
+
 
         return sql;
     }
@@ -1060,12 +641,140 @@ public class GetLineage {
 
     }
 
+    private void addPreviousLineageList(int depth, SelectItem selectItem, String selectAlias) {
+        ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
+
+        for (LineageInfo lineageinfo : lineageLists) {
+            if (lineageinfo.depth == (depth - 1)) {
+                LineageInfo newinfo = new LineageInfo();
+                newinfo.setColumn(lineageinfo.getColumn());
+                newinfo.setTable(lineageinfo.getTable());
+                //newinfo.setTableAlias(lineageinfo.getTableAlias());
+                newinfo.setDepth(depth);
+                newinfo.setSchema(lineageinfo.getSchema());
+                newinfo.setExpression(selectItem.toString());
+                newinfo.setSelectAlias(selectAlias);
+
+                newinfos.add(newinfo);
+            }
+        }
+        this.lineageLists.addAll(newinfos);
+    }
+
+    private void addAllColumnsLineageListByTableType(ArrayList <MetadataInfo> sources, Table table, String selectAlias, int depth, SelectItem selectItem) {
+        MetadataInfo metadata = new MetadataInfo();
+        String tableName = table.getName();
+        String schemaName = null;
+        TableNameType type = getTableNameType(sources, tableName);
+
+        if (type == TableNameType.SelectAlias) {
+            ArrayList <LineageInfo> searchLists = searchSelectList(selectItem, tableName, selectAlias, depth);
+            if (searchLists.size() > 0) {
+                lineageLists.addAll(searchSelectList(selectItem, tableName, selectAlias, depth));
+            }
+        } else {
+            if (type == TableNameType.Table) {
+                schemaName = table.getSchemaName() != null
+                        ? table.getSchemaName() : metadata.searchSchemaName(sources, tableName);
+
+            } else if (type == TableNameType.TableAlias) {
+                MetadataInfo tableInfo = metadata.checkTableAlias(sources, tableName);
+                tableName = tableInfo.getTable();
+                schemaName = tableInfo.getSchema();
+            }
+
+            searchAllColumnsAndAddLineageList(schemaName, tableName, selectAlias, depth, selectItem);
+        }
+    }
+
+    private void searchAllColumnsAndAddLineageList(String schema, String table, String selectAlias, int depth, SelectItem selectItem) {
+        //테이블과 db명으로 컬럼 정보를 가지고 옮
+        try {
+            ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
+
+            //TODO: 테이블 이름인지 ... 테이블 alias 인지... 아니면 이전 서브 쿼리의 alias 인지 확인해야 함
+            if (cols.size() > 0) {
+                setLineageLists(cols, table, depth, schema, selectItem.toString(), selectAlias);
+            } else { // mdm 에 컬럼 정보가 없으면 "*"을 컬럼으로 그냥 넣어 줌
+                cols.add("*");
+                setLineageLists(cols, table, depth, schema, selectItem.toString(), selectAlias);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("searchAllColumnsAndAddLineageList : " + e.getMessage());
+        }
+
+
+    }
+
+
+    private String getSelectAliasName(ArrayList <SubSelect> subSelectLists, String selectList) {
+        String selectAlias = null;
+        for (SubSelect subSelect : subSelectLists) {
+            if (selectList.equals(subSelect.getSelectBody().toString())) {
+                if (subSelect.getAlias() != null) {
+                    selectAlias = subSelect.getAlias().getName();
+                    return selectAlias;
+                }
+            }
+        }
+        return null;
+    }
+
+    //테이블 이름이 테이블 이름인지, 테이블 Alias 이름인지, SelectAlias인지 체크
+    private TableNameType getTableNameType(ArrayList <MetadataInfo> sources, String tableName) {
+        TableNameType type = TableNameType.Empty;
+        MetadataInfo metadata = new MetadataInfo();
+
+        if (metadata.checkTable(sources, tableName) != null) {
+            type = TableNameType.Table;
+        } else if (metadata.checkTableAlias(sources, tableName) != null) {
+            type = TableNameType.TableAlias;
+        } else {
+            for (LineageInfo lineageinfo : lineageLists) {
+                if (lineageinfo.getSelectAlias() != null && lineageinfo.getSelectAlias().equalsIgnoreCase(tableName)) {
+                    type = TableNameType.SelectAlias;
+                }
+            }
+        }
+        return type;
+    }
+
+    //전체 리니지 리스트에서 alias 로 체크해서 select 리스트를 찾아서 리니지 리스트에 추가 함
+    private ArrayList <LineageInfo> searchSelectList(SelectItem selectItem, String tableName, String selectAlias, int depth) {
+        ArrayList <LineageInfo> newinfos = new ArrayList <LineageInfo>();
+        for (LineageInfo lineageinfo : lineageLists) {
+            if (lineageinfo.getSelectAlias() != null && lineageinfo.getSelectAlias().equalsIgnoreCase(tableName)) {
+                LineageInfo newinfo = new LineageInfo();
+
+                newinfo.setColumn(lineageinfo.getColumn());
+                newinfo.setTable(lineageinfo.getTable());
+                newinfo.setDepth(depth);
+                newinfo.setSchema(lineageinfo.getSchema());
+                newinfo.setExpression(selectItem.toString());
+                newinfo.setSelectAlias(selectAlias);
+
+                newinfos.add(newinfo);
+
+            }
+        }
+        return newinfos;
+    }
 
     public enum SearchType {
         //
         Table,
         Column,
         Schema
+    }
+
+    private enum TableNameType {
+        //
+        Table,
+        TableAlias,
+        SelectAlias,
+        Empty
     }
 
 

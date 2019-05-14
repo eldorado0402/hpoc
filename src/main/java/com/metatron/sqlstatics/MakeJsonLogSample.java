@@ -364,6 +364,7 @@ public class MakeJsonLogSample {
         String sql19 = "SELECT MAIN_PROCESS_ID               FROM MES_PRODUCT_VW               WHERE PRODUCT_ID = :PRODUCT_ID       AND PRODUCT_VER = :PRODUCT_VER     AND LINE = :LINE";
 
 
+        //TODO : alias 테이블 찾아야 하는데 못 찾음, expression에서 2개 컬럼 넣어야 하는데 한개만 넣음
         String sql20 = "SELECT /*+ INDEX(D IDX_SETUP_DATA_TRX_R2R_01)*/ REGEXP_SUBSTR (REGEXP_SUBSTR (B.SETUP_KEY_VALUE , '(PROCESS_ID=)[^;]+', 1, 1), '[^=]+', 2, 2) AS PROCESS_ID" +
                 " FROM SETUP_KEY_MST_R2R A , SETUP_KEY_VALUE_MST_R2R B , SETUP_SCHEMA_MST_R2R C  , SETUP_DATA_TRX_R2R D , SETUP_TRX_R2R E WHERE A.SETUP_KEY_NAME = :SETUP_KEY_NAME" +
                 " AND B.SETUP_KEY_VALUE LIKE REPLACE(:SETUP_KEY_VALUE, '_', ':') ESCAPE ':'    AND B.SETUP_KEY_RAWID = A.RAWID AND C.SETUP_KEY_RAWID = A.RAWID " +
@@ -373,7 +374,16 @@ public class MakeJsonLogSample {
                 " REGEXP_SUBSTR (REGEXP_SUBSTR (B.SETUP_KEY_VALUE , '(PROCESS_ID=)[^;]+', 1, 1), '[^=]+', 2, 2) ASC";
 
 
-        String sql21 = "SELECT /*+ USE_NL(INQUIRY EX) */       inquiry.rawid, inquiry.lot_hst_rawid, inquiry.model_name, inquiry.model_status, inquiry.request_dtts, inquiry.unit,        inquiry.reply_dtts, inquiry.time_interval, inquiry.substrate_id, inquiry.unit_id, inquiry.input_name,        inquiry.r2r_value, inquiry.r2r_dtts, inquiry.r2r_default_value, inquiry.r2r_upper_limit,        inquiry.r2r_lower_limit, inquiry.r2r_status, inquiry.process_use_yn, inquiry.reply_yn, inquiry.job_pre_value,        inquiry.job_pre_dtts, inquiry.user_message, inquiry.system_message, inquiry.exception_message,        inquiry.input_value,        inquiry.last_update_by, inquiry.last_update_dtts, inquiry.create_by, inquiry.create_dtts,        ex.rawid exrawid, ex.item_name, ex.item_value  FROM INQUIRY_HST_R2R inquiry   LEFT OUTER JOIN INQUIRY_EXT_HST_R2R ex     ON inquiry.rawid = ex.inquiry_hst_rawid AND (ex.CREATE_DTTS BETWEEN SYSDATE - 85 AND SYSDATE + 0.001)  WHERE inquiry.lot_hst_rawid = :1 AND (inquiry.CREATE_DTTS BETWEEN SYSDATE - 85 AND SYSDATE + 0.001)  ORDER BY input_name, model_name, substrate_id, inquiry.create_dtts DESC";
+        String sql21 = "SELECT /*+ USE_NL(INQUIRY EX) */       inquiry.rawid, inquiry.lot_hst_rawid, inquiry.model_name, inquiry.model_status" +
+                ", inquiry.request_dtts, inquiry.unit,        inquiry.reply_dtts, inquiry.time_interval, inquiry.substrate_id, inquiry.unit_id" +
+                ", inquiry.input_name,        inquiry.r2r_value, inquiry.r2r_dtts, inquiry.r2r_default_value, inquiry.r2r_upper_limit" +
+                ",        inquiry.r2r_lower_limit, inquiry.r2r_status, inquiry.process_use_yn, inquiry.reply_yn, inquiry.job_pre_value" +
+                ",        inquiry.job_pre_dtts, inquiry.user_message, inquiry.system_message, inquiry.exception_message,        inquiry.input_value" +
+                ",        inquiry.last_update_by, inquiry.last_update_dtts, inquiry.create_by, inquiry.create_dtts" +
+                ",        ex.rawid exrawid, ex.item_name, ex.item_value  FROM INQUIRY_HST_R2R inquiry   " +
+                "LEFT OUTER JOIN INQUIRY_EXT_HST_R2R ex     ON inquiry.rawid = ex.inquiry_hst_rawid AND (ex.CREATE_DTTS BETWEEN SYSDATE - 85 AND SYSDATE + 0.001)" +
+                "  WHERE inquiry.lot_hst_rawid = :1 AND (inquiry.CREATE_DTTS BETWEEN SYSDATE - 85 AND SYSDATE + 0.001)  " +
+                "ORDER BY input_name, model_name, substrate_id, inquiry.create_dtts DESC";
 
 
         //test sql

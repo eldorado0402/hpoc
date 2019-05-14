@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java" line="101" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java" line="729" mnemonic="1" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3daf7297-446d-4702-a277-f48c8c9732ae" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnCollectVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/query_statics.iml" beforeDir="false" afterPath="$PROJECT_DIR$/query_statics.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnsFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnsFinder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/LineageInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/popularity/LineageInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java" afterDir="false" />
     </list>
@@ -30,26 +24,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GetLineage.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GetLineage.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-13269">
-              <caret line="80" selection-start-line="80" selection-end-line="80" />
+            <state relative-caret-position="1007">
+              <caret line="306" column="89" selection-start-line="306" selection-start-column="73" selection-end-line="306" selection-end-column="89" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#801#814#0" expanded="true" />
+                <element signature="e#9390#9403#0" expanded="true" />
+                <element signature="e#14820#14833#0" expanded="true" />
+                <element signature="e#22143#22159#0" expanded="true" />
+                <element signature="e#27934#27942#0" expanded="true" />
+                <element signature="e#30729#30742#0" expanded="true" />
+                <element signature="e#35097#35110#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="QueryParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
+      <file leaf-file-name="ArrayList.java" pinned="false" current-in-tab="false">
+        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/util/ArrayList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="549">
-              <caret line="101" selection-start-line="101" selection-end-line="101" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="12180">
+              <caret line="858" selection-start-line="858" selection-end-line="858" />
             </state>
           </provider>
         </entry>
@@ -57,8 +55,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="76" column="50" selection-start-line="76" selection-start-column="50" selection-end-line="76" selection-end-column="50" />
+            <state relative-caret-position="237">
+              <caret line="73" column="38" selection-start-line="73" selection-start-column="38" selection-end-line="73" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -66,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MakeJsonLogSample.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MakeJsonLogSample.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="299" column="398" selection-start-line="299" selection-start-column="398" selection-end-line="299" selection-end-column="398" />
+            <state relative-caret-position="1342">
+              <caret line="359" column="40" selection-start-line="359" selection-start-column="40" selection-end-line="359" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -81,17 +79,20 @@
       <file leaf-file-name="ParseDataRecord.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="536">
+            <state relative-caret-position="645">
               <caret line="69" selection-start-line="69" selection-end-line="77" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DruidLineageRecordOrcWriter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java">
+      <file leaf-file-name="ColumnCollectVisitor.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnCollectVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
+            <state relative-caret-position="165">
+              <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -99,7 +100,7 @@
       <file leaf-file-name="ColumnsFinder.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnsFinder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
+            <state relative-caret-position="735">
               <caret line="56" selection-start-line="56" selection-end-line="56" />
             </state>
           </provider>
@@ -108,17 +109,17 @@
       <file leaf-file-name="LineageInfo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/LineageInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="103" column="46" selection-start-line="103" selection-start-column="46" selection-end-line="103" selection-end-column="46" />
+            <state relative-caret-position="30">
+              <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="10" selection-end-column="22" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PopularityDataRecord.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/PopularityDataRecord.java">
+      <file leaf-file-name="MetadataInfo.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/MetadataInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="536">
-              <caret line="127" column="44" selection-start-line="127" selection-start-column="44" selection-end-line="127" selection-end-column="44" />
+            <state relative-caret-position="1395">
+              <caret line="109" column="24" selection-start-line="109" selection-start-column="24" selection-end-line="109" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -126,7 +127,7 @@
       <file leaf-file-name="DruidPopularityRecordOrcWriter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/DruidPopularityRecordOrcWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1570">
+            <state relative-caret-position="2565">
               <caret line="196" column="14" selection-start-line="196" selection-start-column="14" selection-end-line="196" selection-end-column="14" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -146,15 +147,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>SelectExpressionItem</find>
-      <find>tables</find>
-      <find>partItems</find>
-      <find>lineageinfo</find>
-      <find>info</find>
-      <find>Table</find>
-      <find>getFullyQualifiedName</find>
-      <find>source</find>
-      <find>setLineageLists</find>
       <find>QueryInfo</find>
       <find>Lineage</find>
       <find>getKey</find>
@@ -176,6 +168,15 @@
       <find>selectList.getFromItem()</find>
       <find>.equals</find>
       <find>getSelectAlias()</find>
+      <find>searchAllColumnsAndAddLineageList</find>
+      <find>setLineageLists</find>
+      <find>selectList</find>
+      <find>A.STATE_KEY</find>
+      <find>setLineageList</find>
+      <find>TO_CHAR(NVL(D.ENGR_TIME, TO_TIMESTAMP(:RESET_TIME4, 'YYYYMMDD HH24MISS.FF3')), 'YYYYMMDD HH24MISS.FF3</find>
+      <find>EQP_ID</find>
+      <find>TableAlias</find>
+      <find>getFromTableInfo</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -220,8 +221,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnsFinder.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnCollectVisitor.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java" />
       </list>
     </option>
   </component>
@@ -252,8 +253,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -316,7 +318,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -401,14 +402,17 @@
       <workItem from="1557454892998" duration="12319000" />
       <workItem from="1557482125395" duration="20820000" />
       <workItem from="1557505125081" duration="2362000" />
+      <workItem from="1557574224959" duration="27066000" />
+      <workItem from="1557737789961" duration="4122000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="287025000" />
+    <option name="totallyTimeSpent" value="318213000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1027" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -420,19 +424,19 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34068358" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.51488423" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3296582" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16422467" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20634921" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.29988974" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -445,32 +449,32 @@
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="bottom" id="Version Control" order="11" />
+      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31753033" />
       <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Messages" order="8" weight="0.3296582" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22405373" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31753033" />
+      <window_info anchor="bottom" id="Version Control" order="11" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="5" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.3296582" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3969129" />
       <window_info id="Capture Tool" order="4" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Java Enterprise" order="12" />
       <window_info anchor="right" id="Maven Projects" order="8" />
-      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -519,12 +523,6 @@
           <option name="timeStamp" value="185" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>674</line>
-          <properties />
-          <option name="timeStamp" value="208" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/util/TablesNamesFinder.class</url>
           <line>211</line>
           <properties />
@@ -550,54 +548,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>401</line>
-          <properties />
-          <option name="timeStamp" value="233" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>504</line>
-          <properties />
-          <option name="timeStamp" value="235" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>509</line>
-          <properties />
-          <option name="timeStamp" value="242" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>620</line>
+          <line>304</line>
           <properties />
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>687</line>
+          <line>127</line>
           <properties />
-          <option name="timeStamp" value="244" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>801</line>
-          <properties />
-          <option name="timeStamp" value="245" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>456</line>
-          <properties />
-          <option name="timeStamp" value="247" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java</url>
-          <line>92</line>
-          <properties />
-          <option name="timeStamp" value="261" />
+          <option name="timeStamp" value="285" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="265" />
+      <option name="time" value="286" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -633,13 +595,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/ParenthesisFromItem.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/jsqlparser/jsqlparser/2.0/jsqlparser-2.0.jar!/net/sf/jsqlparser/statement/select/FromItemVisitor.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -903,6 +858,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/PopularityDataRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1245">
+          <caret line="127" column="44" selection-start-line="127" selection-start-column="44" selection-end-line="127" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnCollectVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -913,51 +892,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/MetadataInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1065">
-          <caret line="87" column="24" selection-start-line="87" selection-start-column="24" selection-end-line="87" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/DruidLineageRecordOrcWriter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="536">
-          <caret line="69" selection-start-line="69" selection-end-line="77" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/ColumnsFinder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
+        <state relative-caret-position="735">
           <caret line="56" selection-start-line="56" selection-end-line="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/LineageInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="103" column="46" selection-start-line="103" selection-start-column="46" selection-end-line="103" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/PopularityDataRecord.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="536">
-          <caret line="127" column="44" selection-start-line="127" selection-start-column="44" selection-end-line="127" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/DruidPopularityRecordOrcWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1570">
+        <state relative-caret-position="2565">
           <caret line="196" column="14" selection-start-line="196" selection-start-column="14" selection-end-line="196" selection-end-column="14" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -965,20 +909,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/QueryParser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/ParseDataRecord.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="549">
-          <caret line="101" selection-start-line="101" selection-end-line="101" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="645">
+          <caret line="69" selection-start-line="69" selection-end-line="77" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java">
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/src.zip!/java/util/ArrayList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-13269">
-          <caret line="80" selection-start-line="80" selection-end-line="80" />
+        <state relative-caret-position="12180">
+          <caret line="858" selection-start-line="858" selection-end-line="858" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/MetadataInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1395">
+          <caret line="109" column="24" selection-start-line="109" selection-start-column="24" selection-end-line="109" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1342">
+          <caret line="359" column="40" selection-start-line="359" selection-start-column="40" selection-end-line="359" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -987,20 +942,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="76" column="50" selection-start-line="76" selection-start-column="50" selection-end-line="76" selection-end-column="50" />
+        <state relative-caret-position="237">
+          <caret line="73" column="38" selection-start-line="73" selection-start-column="38" selection-end-line="73" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/sqlstatics/MakeJsonLogSample.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/LineageInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="299" column="398" selection-start-line="299" selection-start-column="398" selection-end-line="299" selection-end-column="398" />
+        <state relative-caret-position="30">
+          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="10" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/metatron/popularity/GetLineage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1007">
+          <caret line="306" column="89" selection-start-line="306" selection-start-column="73" selection-end-line="306" selection-end-column="89" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#801#814#0" expanded="true" />
+            <element signature="e#9390#9403#0" expanded="true" />
+            <element signature="e#14820#14833#0" expanded="true" />
+            <element signature="e#22143#22159#0" expanded="true" />
+            <element signature="e#27934#27942#0" expanded="true" />
+            <element signature="e#30729#30742#0" expanded="true" />
+            <element signature="e#35097#35110#0" expanded="true" />
           </folding>
         </state>
       </provider>
