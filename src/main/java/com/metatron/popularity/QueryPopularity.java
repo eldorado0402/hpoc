@@ -29,7 +29,7 @@ public class QueryPopularity {
 
     private static final Logger logger = LoggerFactory.getLogger(QueryPopularity.class);
 
-    public void getQueryStaticsFromHdfsFile() {
+    public void getQueryStaticsFromHdfsFile(String coreSitePath,String hdfsSitePath) {
 
         //read log file
         BufferedReader br = null;
@@ -44,11 +44,11 @@ public class QueryPopularity {
 
             Configuration conf = new Configuration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePath = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
+            conf.addResource(new Path(hdfsSitePath));
 
 
             Path inputFile = new Path(sqlConfiguration.get("popularity_input_filename"));
@@ -76,14 +76,25 @@ public class QueryPopularity {
                 QueryParser parser = new QueryParser();
                 List<String> sourceTables = null;
                 Statement statement;
-                QueryParser.SqlType type=null;
-                String targetTable;
+                QueryParser.SqlType type=QueryParser.SqlType.NONE;
+                long createdTime = -1;
+                String sqlId = null;
+                String engineType=null;
 
                 String query = jsonData.get("sql").toString();
 
                 // sql 이 없으면 다음 라인 처리
                 if (query == null || query.trim().equals(""))
                     continue;
+
+                if (jsonData.get("engineType") != null)
+                    engineType = jsonData.get("engineType").toString();
+
+                if (jsonData.get("createTime") != null)
+                    createdTime = (Long) jsonData.get("createTime");
+
+                if (jsonData.get("sqlId") != null)
+                    sqlId = jsonData.get("sqlId").toString();
 
                 //get query type
                 try {
@@ -102,62 +113,17 @@ public class QueryPopularity {
                 if (lineageLists != null && lineageLists.size() >= 1) {
 
                     for (LineageInfo info : lineageLists) {
-                        //output data
-                        PopularityDataRecord popularityData = new PopularityDataRecord();
-
-                        //read from log file
-                        popularityData.setSql(jsonData.get("sql").toString());
-
-                        if (jsonData.get("engineType") != null)
-                            popularityData.setEngineType(jsonData.get("engineType").toString());
-
-                        if (jsonData.get("createTime") != null)
-                            popularityData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                        if (jsonData.get("sqlId") != null)
-                            popularityData.setSqlId(jsonData.get("sqlId").toString());
-
-                        if (type != null)
-                            popularityData.setSqlType(type.toString());
-
-                        //set schema
-                        popularityData.setSchema(info.getSchema());
-                        //set source Table
-                        popularityData.setTable(info.getTable());
-                        //set source Table alisas
-                        popularityData.setTableAlias(info.getTableAlias());
-
-                        popularityData.setColumn(info.getColumn());
-                        //set source Table alisas
-                        popularityData.setColumnAlias(info.getColumnAlias());
-
-                        //set depth
-                        popularityData.setDepth(info.getDepth());
-
-                        //write
-                        writeResultToHdfsFile(writer, popularityData);
+                        writePopularityDataRecord(writer,engineType,createdTime ,sqlId, query,
+                                info.getSchema(), info.getTable(), info.getTableAlias(), info.getColumn(), info.getColumnAlias(),
+                                info.getDepth(), type.toString());
 
                     }
 
                 } else { //파싱되는 정보가 없으면 쿼리 기본 정보만 찍음
 
-                    //output data
-                    PopularityDataRecord popularityData = new PopularityDataRecord();
-
-                    //read from log file
-                    popularityData.setSql(jsonData.get("sql").toString());
-
-                    if (jsonData.get("engineType") != null)
-                        popularityData.setEngineType(jsonData.get("engineType").toString());
-
-                    if (jsonData.get("createTime") != null)
-                        popularityData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                    if (jsonData.get("sqlId") != null)
-                        popularityData.setSqlId(jsonData.get("sqlId").toString());
-
-                    //write
-                    writeResultToHdfsFile(writer, popularityData);
+                    writePopularityDataRecord(writer,engineType, createdTime ,sqlId, query,
+                            null, null, null, null, null,
+                            -1, type.toString());
 
                 }
 
@@ -206,13 +172,12 @@ public class QueryPopularity {
     }
 
 
-    public void getQueryStaticsFromApplicationLogFile() {
+    public void getQueryStaticsFromApplicationLogFile(String coreSitePath,String hdfsSitePath, String applogPath) {
 
         //read log file
         BufferedReader br = null;
         FSDataOutputStream fsDataOutputStream = null;
         PrintWriter writer = null;
-        JSONParser jsonParser = new JSONParser();
 
         //read config
         try {
@@ -222,12 +187,11 @@ public class QueryPopularity {
 
             Configuration conf = new Configuration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
-
+            conf.addResource(new Path(hdfsSitePath));
             Path outputFile = new Path(sqlConfiguration.get("popularity_output_filename"));
 
             FileSystem fs = FileSystem.get(conf);
@@ -241,27 +205,30 @@ public class QueryPopularity {
             fsDataOutputStream = fs.create(outputFile);
             writer = new PrintWriter(fsDataOutputStream);
 
-            ArrayList<String> logs = readApplicationLogFile();
+            ArrayList<String> logs = readApplicationLogFile(applogPath);
 
             for( String query : logs )
             {
                 QueryParser parser = new QueryParser();
-                List<String> sourceTables = null;
                 Statement statement;
-                QueryParser.SqlType type=null;
-                String targetTable;
+                QueryParser.SqlType type= QueryParser.SqlType.NONE;
+                long createdTime;
+                String sqlId;
 
                 // sql 이 없으면 다음 라인 처리
                 if (query == null || query.trim().equals(""))
                     continue;
 
+                // set uuid
+                sqlId = UUID.randomUUID().toString();
+                //set
+                createdTime = System.currentTimeMillis();
                 //get query type
                 try {
                     statement = CCJSqlParserUtil.parse(query);
                     type = parser.getSqlType(query, statement);
                 }catch(Exception e){
-                    System.out.println(query);
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
 
                 //TODO : lineage list 를 가져오기
@@ -272,59 +239,17 @@ public class QueryPopularity {
                 if (lineageLists != null && lineageLists.size() >= 1) {
 
                     for (LineageInfo info : lineageLists) {
-                        //output data
-                        PopularityDataRecord popularityData = new PopularityDataRecord();
-
-                        //read from log file
-                        popularityData.setSql(query);
-
-                        popularityData.setCreatedTime(System.currentTimeMillis());
-                        popularityData.setSqlId(UUID.randomUUID().toString());
-                        popularityData.setEngineType(engineType);
-
-                        if (type != null)
-                            popularityData.setSqlType(type.toString());
-
-                        //set schema
-                        popularityData.setSchema(info.getSchema());
-                        //set source Table
-                        popularityData.setTable(info.getTable());
-                        //set source Table alisas
-                        popularityData.setTableAlias(info.getTableAlias());
-
-                        popularityData.setColumn(info.getColumn());
-                        //set source Table alisas
-                        popularityData.setColumnAlias(info.getColumnAlias());
-
-                        //set depth
-                        popularityData.setDepth(info.getDepth());
-
-                        //write
-                        writeResultToHdfsFile(writer, popularityData);
-
+                        writePopularityDataRecord(writer,engineType,createdTime ,sqlId, query,
+                                info.getSchema(), info.getTable(), info.getTableAlias(), info.getColumn(), info.getColumnAlias(),
+                                info.getDepth(), type.toString());
                     }
 
                 } else { //파싱되는 정보가 없으면 쿼리 기본 정보만 찍음
-
-                    //output data
-                    PopularityDataRecord popularityData = new PopularityDataRecord();
-
-                    //read from log file
-                    popularityData.setSql(query);
-
-                    popularityData.setCreatedTime(System.currentTimeMillis());
-                    popularityData.setSqlId(UUID.randomUUID().toString());
-                    popularityData.setEngineType(engineType);
-
-                    if (type != null)
-                        popularityData.setSqlType(type.toString());
-
-                    //write
-                    writeResultToHdfsFile(writer, popularityData);
+                    writePopularityDataRecord(writer,engineType,createdTime ,sqlId, query,
+                            null, null, null, null, null,
+                            -1, type.toString());
 
                 }
-
-
             }
 
 
@@ -332,7 +257,10 @@ public class QueryPopularity {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        catch (Exception e) {
             e.printStackTrace();
             //logger.info(e);
         } finally {
@@ -362,33 +290,41 @@ public class QueryPopularity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            System.out.println("COMPLETE!!!");
         }
 
     }
 
 
-    private ArrayList<String> readApplicationLogFile() {
+    private ArrayList<String> readApplicationLogFile(String applogPath) {
 
         FileWriter writer = null;
         InputStream inStream = null;
-        File file = null;
         ArrayList<String> sqls = new ArrayList<String>();;
+
+        File folder = null;
+        File[] listOfFiles = null;
 
         try {
 
-            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+            folder = new File(applogPath);
+            listOfFiles = folder.listFiles();
 
-            file = new File(sqlConfiguration.get("application_log_filename"));
-            inStream = new FileInputStream(file);
-            String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+            for (File file : listOfFiles){
+                if (file.isFile()) {
 
-            Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}",Pattern.DOTALL);//[sfx] query ~ next line 로그
-            Matcher matcher = MY_PATTERN.matcher(logs);
+                    inStream = new FileInputStream(file);
+                    String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
 
-            while (matcher.find()) {
-                sqls.add(matcher.group(1));
+                    Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}", Pattern.DOTALL);//[sfx] query ~ next line 로그
+                    Matcher matcher = MY_PATTERN.matcher(logs);
+
+                    while (matcher.find()) {
+                        sqls.add(matcher.group(1));
+                    }
+                }
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -409,6 +345,42 @@ public class QueryPopularity {
         return sqls;
     }
 
+
+
+    public void writePopularityDataRecord(PrintWriter writer,String engineType,long createdTime,String sqlId, String sql,
+                                          String schema,String table, String tableAlia, String column, String  columnAlias,
+                                          int depth, String sqlType){
+
+        PopularityDataRecord popularityData = new PopularityDataRecord();
+
+        //read from log file
+        popularityData.setSql(sql);
+
+        popularityData.setCreatedTime(createdTime);
+        popularityData.setSqlId(sqlId);
+        popularityData.setEngineType(engineType);
+
+        if(sqlType !=null)
+            popularityData.setSqlType(sqlType);
+
+        //set schema
+        popularityData.setSchema(schema);
+        //set source Table
+        popularityData.setTable(table);
+        //set source Table alisas
+        popularityData.setTableAlias(tableAlia);
+
+        popularityData.setColumn(column);
+        //set source Table alisas
+        popularityData.setColumnAlias(columnAlias);
+
+        //set depth
+        popularityData.setDepth(depth);
+
+        //write
+        writeResultToHdfsFile(writer, popularityData);
+
+    }
 
     private void writeResultToHdfsFile(PrintWriter writer, PopularityDataRecord popularityData) {
         StringBuilder sb = new StringBuilder();

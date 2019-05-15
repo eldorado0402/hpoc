@@ -20,13 +20,13 @@ import java.util.List;
 
 public class GetLineage {
 
-    final static String defalutSchema = "hynix_oracle";
+    final static String defalutSchema = "polaris_dev";
     private static final Logger logger = LoggerFactory.getLogger(GetLineage.class);
     private ArrayList <LineageInfo> lineageLists = new ArrayList <LineageInfo>();
 
     public ArrayList <LineageInfo> makeLineageInfos(String sql) {
         //for test
-        sql = getSQL();
+        //sql = getSQL();
 
         Statement statement;
         QueryParser parser = new QueryParser();
@@ -130,7 +130,6 @@ public class GetLineage {
                             //LineageInfo lineageinfo = new LineageInfo();
 
                             //expression 경우 alias 를 여기서 떼어야 할거 같은데...
-//                            if (((SelectExpressionItem) selectItem).getExpression().getClass().getSimpleName().equals("Column")) {
                             if (((SelectExpressionItem) selectItem).getExpression() instanceof Column) {
                                 col_name = ((Column) ((SelectExpressionItem) selectItem).getExpression()).getColumnName();
 
@@ -321,7 +320,7 @@ public class GetLineage {
                     listsize--;
                 }
 
-                printLineagelist(lineageLists);
+                //printLineagelist(lineageLists);
                 return lineageLists;
 
             }

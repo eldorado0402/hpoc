@@ -120,7 +120,6 @@ public class PopularityDataRecord implements Serializable {
     }
 
 
-
     @Override
     public String toString() {
         return "PopularityDataRecord{" +

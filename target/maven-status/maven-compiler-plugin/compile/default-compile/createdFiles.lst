@@ -4,6 +4,7 @@ com/metatron/popularity/QueryPopularity.class
 com/metatron/popularity/PopularityDataRecord.class
 com/metatron/popularity/GetLineage$SearchType.class
 com/metatron/popularity/LineageInfo.class
+com/metatron/popularity/GetLineage$TableNameType.class
 com/metatron/sqlstatics/DruidLineageRecordOrcWriter.class
 com/metatron/popularity/ColumnsFinder.class
 com/metatron/sqlstatics/QueryParser$SqlType.class
@@ -14,3 +15,4 @@ com/metatron/popularity/DruidPopularityRecordOrcWriter.class
 com/metatron/sqlstatics/MakeJsonLogSample.class
 com/metatron/popularity/GetLineage.class
 com/metatron/popularity/MetadataInfo.class
+com/metatron/popularity/ColumnCollectVisitor.class

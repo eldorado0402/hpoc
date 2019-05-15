@@ -35,6 +35,7 @@ public class QueryParser {
 
     private static final Logger logger = LoggerFactory.getLogger(QueryParser.class);
 
+    //LOCAL
     public void getQueryStatics() {
 
         //read log file
@@ -65,12 +66,29 @@ public class QueryParser {
                 Statement statement;
                 SqlType type;
                 String targetTable;
+                String engineType = null;
+                String cluster = null;
+                long createdTime = -1;
+                String sqlId = null;
+
 
                 String query = jsonData.get("sql").toString();
 
                 // sql 이 없으면 다음 라인 처리
                 if (query == null || query.trim().equals(""))
                     continue;
+
+                if (jsonData.get("engineType") != null)
+                    engineType = jsonData.get("engineType").toString();
+
+                if (jsonData.get("createTime") != null)
+                    createdTime = (Long) jsonData.get("createTime");
+
+                if (jsonData.get("cluster") != null)
+                    cluster = jsonData.get("cluster").toString();
+
+                if (jsonData.get("sqlId") != null)
+                    sqlId = jsonData.get("sqlId").toString();
 
                 //sql 이 있으면 처리 시작
                 //parsing이 안되면 다음 라인 처
@@ -93,67 +111,16 @@ public class QueryParser {
                 if (sourceTables != null && sourceTables.size() >= 1) {
 
                     for (String source : sourceTables) {
-                        //output data
-                        ParseDataRecord parseData = new ParseDataRecord();
 
-                        //read from log file
-                        parseData.setSql(jsonData.get("sql").toString());
-
-                        if (jsonData.get("engineType") != null)
-                            parseData.setEngineType(jsonData.get("engineType").toString());
-
-                        if (jsonData.get("createTime") != null)
-                            parseData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                        if (jsonData.get("cluster") != null)
-                            parseData.setCluster(jsonData.get("cluster").toString());
-
-                        if (jsonData.get("sqlId") != null)
-                            parseData.setSqlId(jsonData.get("sqlId").toString());
-
-                        //set sql Type
-                        parseData.setSqlType(type.toString());
-                        //set target Table
-                        parseData.setTargetTable(targetTable);
-                        //set source Table
-                        parseData.setSourceTable(source);
-
-                        //write
-                        writeResultToFile(writer, parseData);
+                        writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                                cluster, source,targetTable, type.toString());
 
                     }
 
                 } else {
 
-                    //output data
-                    ParseDataRecord parseData = new ParseDataRecord();
-
-                    //read from log file
-                    parseData.setSql(jsonData.get("sql").toString());
-
-                    if (jsonData.get("engineType") != null)
-                        parseData.setEngineType(jsonData.get("engineType").toString());
-
-                    if (jsonData.get("createTime") != null)
-                        parseData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                    if (jsonData.get("cluster") != null)
-                        parseData.setCluster(jsonData.get("cluster").toString());
-
-                    if (jsonData.get("sqlId") != null)
-                        parseData.setSqlId(jsonData.get("sqlId").toString());
-
-                    //set sql Type
-                    parseData.setSqlType(type.toString());
-                    //set target Table
-                    parseData.setTargetTable(targetTable);
-                    //set source Table
-                    parseData.setSourceTable(null);
-
-                    //logger.info(parseData.toString());
-
-                    //write
-                    writeResultToFile(writer, parseData);
+                    writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                             cluster, null,targetTable, type.toString());
 
                 }
 
@@ -192,7 +159,8 @@ public class QueryParser {
     }
 
 
-    public void getQueryStaticsFromHdfsFile() {
+    //HDFS
+    public void getQueryStaticsFromHdfsFile(String coreSitePath,String hdfsSitePath) {
 
         //read log file
         BufferedReader br = null;
@@ -207,11 +175,11 @@ public class QueryParser {
 
             Configuration conf = new Configuration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
+            conf.addResource(new Path(hdfsSitePath));
 
 
             Path inputFile = new Path(sqlConfiguration.get("hdfs_input_filename"));
@@ -241,12 +209,29 @@ public class QueryParser {
                 Statement statement;
                 SqlType type;
                 String targetTable;
+                String engineType = null;
+                String cluster = null;
+                long createdTime = -1;
+                String sqlId = null;
 
                 String query = jsonData.get("sql").toString();
 
                 // sql 이 없으면 다음 라인 처리
                 if (query == null || query.trim().equals(""))
                     continue;
+
+
+                if (jsonData.get("engineType") != null)
+                    engineType = jsonData.get("engineType").toString();
+
+                if (jsonData.get("createTime") != null)
+                    createdTime = (Long) jsonData.get("createTime");
+
+                if (jsonData.get("cluster") != null)
+                    cluster = jsonData.get("cluster").toString();
+
+                if (jsonData.get("sqlId") != null)
+                    sqlId = jsonData.get("sqlId").toString();
 
                 //sql 이 있으면 처리 시작
                 //parsing이 안되면 다음 라인 처
@@ -269,75 +254,18 @@ public class QueryParser {
                 if (sourceTables != null && sourceTables.size() >= 1) {
 
                     for (String source : sourceTables) {
-                        //output data
-                        ParseDataRecord parseData = new ParseDataRecord();
 
-                        //read from log file
-                        parseData.setSql(jsonData.get("sql").toString());
-
-                        if (jsonData.get("engineType") != null)
-                            parseData.setEngineType(jsonData.get("engineType").toString());
-
-                        if (jsonData.get("createTime") != null)
-                            parseData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                        if (jsonData.get("cluster") != null)
-                            parseData.setCluster(jsonData.get("cluster").toString());
-
-                        if (jsonData.get("sqlId") != null)
-                            parseData.setSqlId(jsonData.get("sqlId").toString());
-
-                        //set sql Type
-                        parseData.setSqlType(type.toString());
-                        //set target Table
-                        parseData.setTargetTable(targetTable);
-                        //set source Table
-                        parseData.setSourceTable(source);
-
-                        //write
-                        writeResultToHdfsFile(writer, parseData);
+                        writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                                cluster, source,targetTable, type.toString());
 
                     }
 
                 } else {
 
-                    //output data
-                    ParseDataRecord parseData = new ParseDataRecord();
-
-                    //read from log file
-                    parseData.setSql(jsonData.get("sql").toString());
-
-                    if (jsonData.get("engineType") != null)
-                        parseData.setEngineType(jsonData.get("engineType").toString());
-
-                    if (jsonData.get("createTime") != null)
-                        parseData.setCreatedTime((Long) jsonData.get("createTime"));
-
-                    if (jsonData.get("cluster") != null)
-                        parseData.setCluster(jsonData.get("cluster").toString());
-
-                    if (jsonData.get("sqlId") != null)
-                        parseData.setSqlId(jsonData.get("sqlId").toString());
-
-                    //set sql Type
-                    parseData.setSqlType(type.toString());
-                    //set target Table
-                    parseData.setTargetTable(targetTable);
-                    //set source Table
-                    parseData.setSourceTable(null);
-
-                    //logger.info(parseData.toString());
-
-                    //write
-                    writeResultToHdfsFile(writer, parseData);
+                    writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                            cluster, null,targetTable, type.toString());
 
                 }
-
-//                //TODO : get lineage !!!!
-//                if (type == SqlType.SELECT) {
-//                    GetLineage lineage = new GetLineage();
-//                    lineage.makeLineageInfos(query);
-//                }
 
             }
 
@@ -384,7 +312,8 @@ public class QueryParser {
 
 
 
-    public void getQueryStaticsFromApplicationLogFile() {
+    //APPLOG local
+    public void getQueryStaticsFromApplicationLogFile(String coreSitePath,String hdfsSitePath, String applogPath) {
 
         //read log file
         BufferedReader br = null;
@@ -396,14 +325,15 @@ public class QueryParser {
         try {
             //TODO : 추후에는 변경 필요
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
+            String engineType= sqlConfiguration.get("engineType");
 
             Configuration conf = new Configuration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
+            conf.addResource(new Path(hdfsSitePath));
 
             Path outputFile = new Path(sqlConfiguration.get("hdfs_output_filename"));
 
@@ -418,19 +348,26 @@ public class QueryParser {
             fsDataOutputStream = fs.create(outputFile);
             writer = new PrintWriter(fsDataOutputStream);
 
-            ArrayList<String> logs = readApplicationLogFile();
+            ArrayList<String> logs = readApplicationLogFile(applogPath);
 
             for( String query : logs )
             {
                 QueryParser parser = new QueryParser();
                 List <String> sourceTables = null;
                 Statement statement;
-                SqlType type;
-                String targetTable;
+                SqlType type = QueryParser.SqlType.NONE;;
+                String targetTable = null;
+                long createdTime;
+                String sqlId;
 
                 // sql 이 없으면 다음 라인 처리
                 if (query == null || query.trim().equals(""))
                     continue;
+
+                // set uuid
+                sqlId = UUID.randomUUID().toString();
+                //set
+                createdTime = System.currentTimeMillis();
 
                 //sql 이 있으면 처리 시작
                 //parsing이 안되면 다음 라인 처
@@ -453,57 +390,15 @@ public class QueryParser {
                 if (sourceTables != null && sourceTables.size() >= 1) {
 
                     for (String source : sourceTables) {
-                        //output data
-                        ParseDataRecord parseData = new ParseDataRecord();
-
-                        //read from log file
-                        parseData.setSql(query);
-
-                        if (sqlConfiguration.get("engineType") != null)
-                            parseData.setEngineType(sqlConfiguration.get("engineType"));
-
-                        parseData.setCreatedTime(System.currentTimeMillis());
-                        parseData.setCluster("localhost");
-                        parseData.setSqlId(UUID.randomUUID().toString());
-
-                        //set sql Type
-                        parseData.setSqlType(type.toString());
-                        //set target Table
-                        parseData.setTargetTable(targetTable);
-                        //set source Table
-                        parseData.setSourceTable(source);
-
-                        //write
-                        writeResultToHdfsFile(writer, parseData);
+                        writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                                "localhost", source,targetTable, type.toString());
 
                     }
 
                 } else {
 
-                    //output data
-                    ParseDataRecord parseData = new ParseDataRecord();
-
-                    //read from log file
-                    parseData.setSql(query);
-
-                    if (sqlConfiguration.get("engineType") != null)
-                        parseData.setEngineType(sqlConfiguration.get("engineType"));
-
-                    parseData.setCreatedTime(System.currentTimeMillis());
-                    parseData.setCluster("localhost");
-                    parseData.setSqlId(UUID.randomUUID().toString());
-                    //set sql Type
-
-                    parseData.setSqlType(type.toString());
-                    //set target Table
-                    parseData.setTargetTable(targetTable);
-                    //set source Table
-                    parseData.setSourceTable(null);
-
-                    //logger.info(parseData.toString());
-
-                    //write
-                    writeResultToHdfsFile(writer, parseData);
+                    writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                            "localhost", null,targetTable, type.toString());
 
                 }
 
@@ -662,6 +557,62 @@ public class QueryParser {
 
     }
 
+    private void writeParseDataRecord(FileWriter writer,String engineType,long createdTime,String sqlId, String sql,
+                                      String cluster, String sourceTable, String targetTable, String sqlType){
+
+        //output data
+        ParseDataRecord parseData = new ParseDataRecord();
+
+        //read from log file
+        parseData.setSql(sql);
+        parseData.setEngineType(engineType);
+
+        parseData.setCreatedTime(createdTime);
+        parseData.setCluster(cluster);
+        parseData.setSqlId(sqlId);
+
+        //set sql Type
+        if(sqlType!=null)
+            parseData.setSqlType(sqlType);
+
+        //set target Table
+        parseData.setTargetTable(targetTable);
+        //set source Table
+        parseData.setSourceTable(sourceTable);
+
+        //write
+        writeResultToFile(writer, parseData);
+
+    }
+
+    private void writeParseDataRecord(PrintWriter writer,String engineType,long createdTime,String sqlId, String sql,
+                                      String cluster, String sourceTable, String targetTable, String sqlType){
+
+        //output data
+        ParseDataRecord parseData = new ParseDataRecord();
+
+        //read from log file
+        parseData.setSql(sql);
+        parseData.setEngineType(engineType);
+
+        parseData.setCreatedTime(createdTime);
+        parseData.setCluster(cluster);
+        parseData.setSqlId(sqlId);
+
+        //set sql Type
+        if(sqlType!=null)
+            parseData.setSqlType(sqlType);
+
+        //set target Table
+        parseData.setTargetTable(targetTable);
+        //set source Table
+        parseData.setSourceTable(sourceTable);
+
+        //write
+        writeResultToHdfsFile(writer, parseData);
+
+    }
+
     private void writeResultToFile(FileWriter writer, ParseDataRecord parseData) {
         StringBuilder sb = new StringBuilder();
         ObjectMapper mapper = new ObjectMapper();
@@ -705,26 +656,35 @@ public class QueryParser {
     }
 
 
-    private ArrayList<String> readApplicationLogFile() {
+    private ArrayList<String> readApplicationLogFile(String applogPath) {
 
         FileWriter writer = null;
         InputStream inStream = null;
-        File file = null;
         ArrayList<String> sqls = new ArrayList<String>();;
+        File folder = null;
+        File[] listOfFiles = null;
 
         try {
 
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            file = new File(sqlConfiguration.get("application_log_filename"));
-            inStream = new FileInputStream(file);
-            String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+            folder = new File(applogPath);
+            listOfFiles = folder.listFiles();
 
-            Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}",Pattern.DOTALL);//[sfx] query ~ next line 로그
-            Matcher matcher = MY_PATTERN.matcher(logs);
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
 
-            while (matcher.find()) {
-                sqls.add(matcher.group(1));
+                    //file = new File(sqlConfiguration.get(file));
+                    inStream = new FileInputStream(file);
+                    String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+
+                    Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}", Pattern.DOTALL);//[sfx] query ~ next line 로그
+                    Matcher matcher = MY_PATTERN.matcher(logs);
+
+                    while (matcher.find()) {
+                        sqls.add(matcher.group(1));
+                    }
+                }
             }
 
 
@@ -761,6 +721,9 @@ public class QueryParser {
         DROP,
         NONE
     }
+
+
+
 
 }
 

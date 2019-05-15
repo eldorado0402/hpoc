@@ -48,7 +48,7 @@ public class DruidPopularityRecordOrcWriter {
         }
     }
 
-    public void processOrc(String logPathDir, String orcFilePath, boolean overwrite) throws Exception {
+    public void processOrc(String logPathDir, String orcFilePath, boolean overwrite,String coreSitePath,String hdfsSitePath) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         Path logPath = new Path(logPathDir);
@@ -58,11 +58,11 @@ public class DruidPopularityRecordOrcWriter {
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             hadoopConf.addResource(new Path(coreSitePath));
-            hadoopConf.addResource(new Path(hdfsSitePathe));
+            hadoopConf.addResource(new Path(hdfsSitePath));
 
         } catch (Exception e) {
             logger.info(e.getMessage());
@@ -122,11 +122,11 @@ public class DruidPopularityRecordOrcWriter {
                 fs.delete(new Path(orcFilePath), true);
 
             //writer.writeOrc(records, orcFilePath);
-            writeOrc(records, orcFilePath);
+            writeOrc(records, orcFilePath,coreSitePath,hdfsSitePath);
         }
     }
 
-    public void writeOrc(List <PopularityDataRecord> records, String orcFilePath) throws Exception {
+    public void writeOrc(List <PopularityDataRecord> records, String orcFilePath,String coreSitePath,String hdfsSitePath) throws Exception {
         //ORC 스키마 정의, Hive 내 bdpown.lineage 테이블 스키마 참조
         Configuration conf = new Configuration();
 
@@ -134,11 +134,11 @@ public class DruidPopularityRecordOrcWriter {
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
+            conf.addResource(new Path(hdfsSitePath));
 
         } catch (Exception e) {
             logger.info(e.getMessage());
@@ -212,18 +212,18 @@ public class DruidPopularityRecordOrcWriter {
         writer.close();
     }
 
-    public void readOrc() throws Exception {
+    public void readOrc(String coreSitePath,String hdfsSitePath) throws Exception {
         Configuration conf = new Configuration();
 
         //TODO: 실제 실행시 삭제하고, 하둡의 conf path를 지정해 주면 됨.
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
-            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
-            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
+//            String coreSitePath = sqlConfiguration.get("hadoop_core_site");
+//            String hdfsSitePathe = sqlConfiguration.get("hadoop_hdfs_site");
 
             conf.addResource(new Path(coreSitePath));
-            conf.addResource(new Path(hdfsSitePathe));
+            conf.addResource(new Path(hdfsSitePath));
 
         } catch (Exception e) {
             logger.info(e.getMessage());

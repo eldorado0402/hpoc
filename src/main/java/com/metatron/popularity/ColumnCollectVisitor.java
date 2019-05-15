@@ -16,12 +16,12 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 
 public  class ColumnCollectVisitor  extends TablesNamesFinder {
 
-    private List<Column> _listColumns = new ArrayList<Column>();
+    private List<Column> columns = new ArrayList<Column>();
 
     public List<Column> getColumns (Expression expression) {
         this.init(false);
         expression.accept(this);
-        return this._listColumns;
+        return this.columns;
     }
 
 
@@ -43,7 +43,7 @@ public  class ColumnCollectVisitor  extends TablesNamesFinder {
 
     @Override
     public void visit(Column column) {
-        _listColumns.add(column);
+        columns.add(column);
     }
 
     @Override
