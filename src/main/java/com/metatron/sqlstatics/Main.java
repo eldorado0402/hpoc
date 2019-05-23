@@ -4,13 +4,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.metatron.popularity.*;
 
-import java.util.ArrayList;
-
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+
+        /*
+        MakeJsonLogSample sample = new MakeJsonLogSample();
+        ArrayList<String> sqls = sample.getORACLEQueryList();
+
+        //JoinTablesFinder join = new JoinTablesFinder();
+
+        JoinTablesCollector join = new JoinTablesCollector();
+
+        try {
+            for (String sql : sqls) {
+                System.out.println("=============================================");
+                System.out.println(sql);
+                //System.out.println(join.joinTablesInfoList(CCJSqlParserUtil.parse(sql)));
+                System.out.println(join.getJoinTablesInfo(CCJSqlParserUtil.parse(sql)).getTargetTable());
+                System.out.println(join.getJoinTablesInfo(CCJSqlParserUtil.parse(sql)).getSourceTableInfos());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        */
+
 
         String analyzeType = args[0];
         String logfileType = args[1];
@@ -18,12 +38,12 @@ public class Main {
         String hdfsSitePath = args[3];
         String applogPath = args[4];
 
-        if(args.length < 4){
+        if (args.length < 4) {
             logger.error("The input args are few in number. Please input args needed");
             return;
         }
 
-        if(analyzeType.equals("STATICS") ) {
+        if (analyzeType.equals("STATICS")) {
             //read config
 
             try {
@@ -47,7 +67,7 @@ public class Main {
                 boolean overwrite = Boolean.parseBoolean(sqlConfiguration.get("overwrite"));
 
                 DruidLineageRecordOrcWriter druidLineageRecordOrcWriter = new DruidLineageRecordOrcWriter();
-                druidLineageRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite,coreSitePath,hdfsSitePath);
+                druidLineageRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath, hdfsSitePath);
 
                 System.out.println("complete!!");
 
@@ -57,7 +77,7 @@ public class Main {
                 logger.error(e.getMessage());
             }
 
-        }else if(analyzeType.equals("POPULARITY")) {
+        } else if (analyzeType.equals("POPULARITY")) {
 
             try {
 
@@ -77,7 +97,7 @@ public class Main {
                 boolean overwrite = Boolean.parseBoolean(sqlConfiguration.get("overwrite"));
 
                 DruidPopularityRecordOrcWriter druidPopularityRecordOrcWriter = new DruidPopularityRecordOrcWriter();
-                druidPopularityRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath,hdfsSitePath);
+                druidPopularityRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath, hdfsSitePath);
 
 
             } catch (Exception e) {

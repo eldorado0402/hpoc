@@ -1,6 +1,7 @@
-package com.metatron.popularity;
+package com.metatron.util;
 
 
+import com.metatron.popularity.MetadataInfo;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -10,7 +11,7 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.*;
 
-public class ColumnsFinder extends TablesNamesFinder {
+public class LineageInfosCollector extends TablesNamesFinder {
 
     private static final String NOT_SUPPORTED_YET = "Not supported yet.";
     private Map <String, String> selectItem = new HashMap <String, String>();
@@ -21,7 +22,7 @@ public class ColumnsFinder extends TablesNamesFinder {
     private List <String> otherItemNames;
     final static String defalutSchema = "polaris_dev";
 
-    public ColumnsFinder() {
+    public LineageInfosCollector() {
     }
 
 

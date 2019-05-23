@@ -1,6 +1,7 @@
-package com.metatron.sqlstatics;
+package com.metatron.test;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.metatron.sqlstatics.SQLConfiguration;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,11 +16,6 @@ import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Collectors;
 
 
 import org.apache.commons.io.IOUtils;

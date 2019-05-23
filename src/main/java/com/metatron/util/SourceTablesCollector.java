@@ -1,4 +1,4 @@
-package com.metatron.sqlstatics;
+package com.metatron.util;
 
 
 import net.sf.jsqlparser.expression.Expression;
@@ -11,16 +11,16 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.*;
 
-public class QueryInfo extends TablesNamesFinder {
+public class SourceTablesCollector extends TablesNamesFinder {
 
     private static final String NOT_SUPPORTED_YET = "Not supported yet.";
     private Map <String, String> selectItem = new HashMap <String, String>();
-    private ArrayList <PlainSelect> selectBodyLists = new ArrayList <PlainSelect>();
+    //private ArrayList <PlainSelect> selectBodyLists = new ArrayList <PlainSelect>();
     private HashMap <String, String> tables; // table name, table alias
     private boolean allowColumnProcessing = false;
     private List <String> otherItemNames;
 
-    public QueryInfo() {
+    public SourceTablesCollector() {
     }
 
 
@@ -35,7 +35,7 @@ public class QueryInfo extends TablesNamesFinder {
     public void visit(PlainSelect plainSelect) {
 
         //all select body
-        this.selectBodyLists.add(plainSelect);
+        //this.selectBodyLists.add(plainSelect);
 
         Iterator var2;
         if (plainSelect.getSelectItems() != null) {
@@ -72,12 +72,6 @@ public class QueryInfo extends TablesNamesFinder {
             plainSelect.getOracleHierarchical().accept(this);
         }
 
-    }
-
-    public ArrayList <PlainSelect> getSelectList(Statement statement) {
-        this.init(false);
-        statement.accept(this);
-        return this.selectBodyLists;
     }
 
     public HashMap <String, String> getTableInfoList(Expression expr) {

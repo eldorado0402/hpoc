@@ -1,4 +1,4 @@
-package com.metatron.popularity;
+package com.metatron.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +14,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
 
-public  class ColumnCollectVisitor  extends TablesNamesFinder {
+public  class ColumnsCollector extends TablesNamesFinder {
 
     private List<Column> columns = new ArrayList<Column>();
 

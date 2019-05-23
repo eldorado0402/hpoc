@@ -722,6 +722,19 @@ public class QueryParser {
         NONE
     }
 
+    public enum JoinType{
+        OUTER,
+        RIGHT,
+        LEFT,
+        NATURAL,
+        FULL,
+        INNER,
+        SIMPLE,
+        CROSS,
+        SEMI,
+        NONE
+    }
+
 
 
 

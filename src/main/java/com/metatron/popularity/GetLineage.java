@@ -2,6 +2,8 @@ package com.metatron.popularity;
 
 import com.metatron.sqlstatics.QueryParser;
 import com.metatron.sqlstatics.SQLConfiguration;
+import com.metatron.util.ColumnsCollector;
+import com.metatron.util.LineageInfosCollector;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -42,10 +44,10 @@ public class GetLineage {
             statement = CCJSqlParserUtil.parse(sql);
             if (parser.getSqlType(sql, statement) == QueryParser.SqlType.SELECT) {
 
-                ColumnsFinder info = new ColumnsFinder();
+                LineageInfosCollector info = new LineageInfosCollector();
                 ArrayList <PlainSelect> selectLists = info.getSelectList(statement);
                 //r각자 accept 구문이 있어서 그런데 accept 구분을 한개로 통일하던가 아니면 아래처럼 새로 객체를 생성해야 함
-                ColumnsFinder subinfo = new ColumnsFinder();
+                LineageInfosCollector subinfo = new LineageInfosCollector();
                 ArrayList <SubSelect> subSelectLists = subinfo.getSubSelectLists(statement);
                 //System.out.println(subSelectLists);
 
@@ -63,7 +65,7 @@ public class GetLineage {
                     String selectAlias = getSelectAliasName(subSelectLists, selectList.toString());
 
                     //get source table
-                    ColumnsFinder tablesInfoFinder = new ColumnsFinder();
+                    LineageInfosCollector tablesInfoFinder = new LineageInfosCollector();
                     //TODO: 스키마까지 함께 붙어 있는 형태로 테이블 이름이 넘어 옮
                     //TODO: source 테이블들을 가지고 올 필요가 있나?...
                     //TODO :테이블 정보를 db 와 table name 정보로 따로 조
@@ -235,7 +237,7 @@ public class GetLineage {
                                 //TODO: expression 자체를 넣어야 하는가?... 컬럼만 사용해야 하는가... 컬럼을 뗴어 내는 것은 추후 고려
 
                                 //TODO : Function column 리스트, column에 테이블 정보가 있는지 없는지 체크
-                                ColumnCollectVisitor columnCollect = new ColumnCollectVisitor();
+                                ColumnsCollector columnCollect = new ColumnsCollector();
                                 List <Column> columns = columnCollect.getColumns(((SelectExpressionItem) selectItem).getExpression());
 
                                 ArrayList<LineageInfo> newinfos = new ArrayList<LineageInfo>();
