@@ -1,7 +1,7 @@
 package com.metatron.test;
 
 import au.com.bytecode.opencsv.CSVReader;
-import com.metatron.sqlstatics.SQLConfiguration;
+import com.metatron.util.SQLConfiguration;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

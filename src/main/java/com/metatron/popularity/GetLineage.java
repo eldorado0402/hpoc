@@ -1,7 +1,7 @@
 package com.metatron.popularity;
 
 import com.metatron.sqlstatics.QueryParser;
-import com.metatron.sqlstatics.SQLConfiguration;
+import com.metatron.util.SQLConfiguration;
 import com.metatron.util.ColumnsCollector;
 import com.metatron.util.LineageInfosCollector;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;

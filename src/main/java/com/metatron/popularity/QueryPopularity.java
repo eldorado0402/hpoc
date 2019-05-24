@@ -1,9 +1,8 @@
 package com.metatron.popularity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.metatron.sqlstatics.ParseDataRecord;
 import com.metatron.sqlstatics.QueryParser;
-import com.metatron.sqlstatics.SQLConfiguration;
+import com.metatron.util.SQLConfiguration;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import org.apache.commons.io.IOUtils;

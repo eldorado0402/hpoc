@@ -1,7 +1,9 @@
-package com.metatron.sqlstatics;
+package com.metatron;
 
-import com.metatron.util.HtmlQueryCollector;
 import com.metatron.popularity.*;
+import com.metatron.sqlstatics.DruidLineageRecordOrcWriter;
+import com.metatron.sqlstatics.QueryParser;
+import com.metatron.util.SQLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

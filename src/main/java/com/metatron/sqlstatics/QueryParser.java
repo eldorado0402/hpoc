@@ -2,12 +2,14 @@ package com.metatron.sqlstatics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metatron.util.HtmlQueryCollector;
+import com.metatron.util.SQLConfiguration;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.view.CreateView;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
+import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.upsert.Upsert;
@@ -646,35 +648,36 @@ public class QueryParser {
     }
 
     //get SQL Type
+    //TODO : instance of 로 수
     public SqlType getSqlType(String query, Statement stmt) {
 
         SqlType sqlType = null;
 
-        if (stmt.getClass().getSimpleName().equals("CreateTable")) {
+        if (stmt instanceof CreateTable) {
             sqlType = SqlType.CREATE_TABLE;
 
-        } else if (stmt.getClass().getSimpleName().equals("CreateView")) {
+        } else if (stmt instanceof CreateView) {
             sqlType = SqlType.CREATE_VIEW;
 
-        } else if (stmt.getClass().getSimpleName().equals("Select")) {
+        } else if (stmt instanceof Select) {
             sqlType = SqlType.SELECT;
 
-        } else if (stmt.getClass().getSimpleName().equals("Insert")) {
+        } else if (stmt instanceof Insert) {
             sqlType = SqlType.INSERT;
 
-        } else if (stmt.getClass().getSimpleName().equals("Merge")) {
+        } else if (stmt instanceof Merge) {
             sqlType = SqlType.MERGE;
 
-        } else if (stmt.getClass().getSimpleName().equals("Update")) {
+        } else if (stmt instanceof Update) {
             sqlType = SqlType.UPDATE;
 
-        } else if (stmt.getClass().getSimpleName().equals("Upsert")) {
+        } else if (stmt instanceof Upsert) {
             sqlType = SqlType.UPSERT;
 
-        } else if (stmt.getClass().getSimpleName().equals("Delete")) {
+        } else if (stmt instanceof Delete) {
             sqlType = SqlType.DELETE;
 
-        } else if (stmt.getClass().getSimpleName().equals("Drop")) {
+        } else if (stmt instanceof Drop) {
             sqlType = SqlType.DROP;
 
         } else {

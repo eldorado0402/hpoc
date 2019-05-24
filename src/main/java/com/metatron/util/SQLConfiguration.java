@@ -1,4 +1,4 @@
-package com.metatron.sqlstatics;
+package com.metatron.util;
 
 import java.io.IOException;
 import java.util.Properties;
