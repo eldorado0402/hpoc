@@ -1,8 +1,9 @@
 package com.metatron.sqlstatics;
 
+import com.metatron.util.HtmlQueryCollector;
+import com.metatron.popularity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.metatron.popularity.*;
 
 public class Main {
 
@@ -57,6 +58,9 @@ public class Main {
                     queryParser.getQueryStaticsFromHdfsFile(coreSitePath, hdfsSitePath);
                 } else if (logfileType.equals("LOCAL")) {
                     queryParser.getQueryStatics(); //from Local
+                } else if (logfileType.equals("WORDPRESS")){
+                    queryParser.getQueryStaticsFromWordPressBlog(coreSitePath, hdfsSitePath, "https://rue44.home.blog/2019/05/23/테스트/"); //from Local
+
                 }
 
                 //TODO: write to hive table (DruidLineageRecordOrcWriter)

@@ -1,6 +1,7 @@
 package com.metatron.sqlstatics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metatron.util.HtmlQueryCollector;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -349,6 +350,135 @@ public class QueryParser {
             writer = new PrintWriter(fsDataOutputStream);
 
             ArrayList<String> logs = readApplicationLogFile(applogPath);
+
+            for( String query : logs )
+            {
+                QueryParser parser = new QueryParser();
+                List <String> sourceTables = null;
+                Statement statement;
+                SqlType type = QueryParser.SqlType.NONE;;
+                String targetTable = null;
+                long createdTime;
+                String sqlId;
+
+                // sql 이 없으면 다음 라인 처리
+                if (query == null || query.trim().equals(""))
+                    continue;
+
+                // set uuid
+                sqlId = UUID.randomUUID().toString();
+                //set
+                createdTime = System.currentTimeMillis();
+
+                //sql 이 있으면 처리 시작
+                //parsing이 안되면 다음 라인 처
+                try {
+                    statement = CCJSqlParserUtil.parse(query);
+                } catch (Exception e) {
+                    logger.error(e + ", query :" + query);
+                    continue;
+                }
+
+                type = parser.getSqlType(query, statement);
+                targetTable = parser.getTargetTable(statement, type);
+
+                //get source table list
+                if (parser.getSourcrTables(statement, type) != null) {
+                    sourceTables = parser.getSourcrTables(statement, type);
+                }
+
+
+                if (sourceTables != null && sourceTables.size() >= 1) {
+
+                    for (String source : sourceTables) {
+                        writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                                "localhost", source,targetTable, type.toString());
+
+                    }
+
+                } else {
+
+                    writeParseDataRecord(writer,engineType,createdTime,sqlId, query,
+                            "localhost", null,targetTable, type.toString());
+
+                }
+
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //logger.info(e);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (fsDataOutputStream != null) {
+                    fsDataOutputStream.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+    //APPLOG local
+    public void getQueryStaticsFromWordPressBlog(String coreSitePath,String hdfsSitePath, String blogUrl) {
+
+        //read log file
+        BufferedReader br = null;
+        FSDataOutputStream fsDataOutputStream = null;
+        PrintWriter writer = null;
+        HtmlQueryCollector htmlQueryCollector = new HtmlQueryCollector();
+
+        //read config
+        try {
+            //TODO : 추후에는 변경 필요
+            SQLConfiguration sqlConfiguration = new SQLConfiguration();
+            String engineType= sqlConfiguration.get("engineType");
+
+            Configuration conf = new Configuration();
+
+            conf.addResource(new Path(coreSitePath));
+            conf.addResource(new Path(hdfsSitePath));
+
+            Path outputFile = new Path(sqlConfiguration.get("hdfs_output_filename"));
+
+            FileSystem fs = FileSystem.get(conf);
+
+            //output file
+            if (fs.exists(outputFile)) {
+                fs.delete(outputFile, true);
+                logger.info("delete previous parser file path in : " + outputFile);
+            }
+
+            fsDataOutputStream = fs.create(outputFile);
+            writer = new PrintWriter(fsDataOutputStream);
+
+            ArrayList<String> logs = htmlQueryCollector.collectSqls(blogUrl);
 
             for( String query : logs )
             {
