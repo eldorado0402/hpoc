@@ -16,7 +16,6 @@ public class HtmlQueryCollector {
 
     public ArrayList<String> collectSqls(String url) {
 
-        //String blogUrl = "https://rue44.home.blog/2019/05/23/테스트/";
         ArrayList<String> sqls = new ArrayList<String>();
 
         try{
@@ -24,9 +23,9 @@ public class HtmlQueryCollector {
 
             Elements contents;
 
-            contents = doc.select("pre[class*=sql]");
+            //contents = doc.select("pre[class*=sql]");
 
-            //contents = doc.select("pre[class~=^wp-block-syntaxhighlighter-code(.*?)sql(.*?)]");
+            contents = doc.select("pre[class~=^(wp-block-syntaxhighlighter-code)(.*)sql(.*)]");
 
             for(Element content : contents){
                 System.out.println(content);
