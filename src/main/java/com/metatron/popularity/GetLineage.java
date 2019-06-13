@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ public class GetLineage {
     final static String defalutSchema = "polaris_dev";
     private static final Logger logger = LoggerFactory.getLogger(GetLineage.class);
     private ArrayList <LineageInfo> lineageLists = new ArrayList <LineageInfo>();
+    private static Connection conn = null;
 
     public ArrayList <LineageInfo> makeLineageInfos(String sql) {
         //for test
@@ -36,12 +38,10 @@ public class GetLineage {
 
         //System.out.println("query : " + sql);
 
-        //TODO : where 절도 파싱해야 하나?
-
-        //TODO: 대소문자 무시
-
         try {
             statement = CCJSqlParserUtil.parse(sql);
+            conn = getMDMConnection();
+
             if (parser.getSqlType(sql, statement) == QueryParser.SqlType.SELECT) {
 
                 LineageInfosCollector info = new LineageInfosCollector();
@@ -144,17 +144,17 @@ public class GetLineage {
                                 }
                                 //TODO : 컬럼 정보가 MDM에 있는지 없는지 체크
                                 if ((type == TableNameType.Table || type == TableNameType.TableAlias)
-                                        && getMetadataByMDM(col_name, schemaName, tableName, SearchType.Column).size() > 0) {
+                                        && getMetadataByMDM(col_name, schemaName, tableName, SearchType.Column,conn).size() > 0) {
 
                                     MetadataInfo table = null;
                                     //schema 정보가 문제임
                                     //TODO : checkTable 새로 만들어야 함 getMetadataByMDM 결과가 리스트로 옮
                                     //TODO: 여기 로직이 좀 이상함.....TableAlias 일때
                                     if (type == TableNameType.Table) {
-                                        table = metadata.checkTable(sources, schemaName, getMetadataByMDM(col_name, schemaName, tableName, SearchType.Table));
+                                        table = metadata.checkTable(sources, schemaName, getMetadataByMDM(col_name, schemaName, tableName, SearchType.Table, conn));
                                     } else if (type == TableNameType.TableAlias) {
                                         MetadataInfo tableAlias = metadata.checkTableAlias(sources, tableName);
-                                        table = metadata.checkTable(sources, tableAlias.getSchema(), getMetadataByMDM(col_name, tableAlias.getSchema(), tableAlias.getTable(), SearchType.Table));
+                                        table = metadata.checkTable(sources, tableAlias.getSchema(), getMetadataByMDM(col_name, tableAlias.getSchema(), tableAlias.getTable(), SearchType.Table, conn));
                                     }
                                     //set table & schema
                                     if (table != null) {
@@ -331,6 +331,16 @@ public class GetLineage {
         } catch (Exception e) {
             logger.info(e.getMessage());
             e.printStackTrace();
+        } finally{
+            if( conn != null){
+                try {
+                    conn.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            conn = null;
         }
 
 
@@ -424,120 +434,6 @@ public class GetLineage {
         return tableInfo;
     }
 
-    private String getSQL() {
-        //String sql = "select * from test3, test2, ( select a , b , e from test1, test2) k";
-        //String sql = "select test3.* from polaris.test3, polrais.test2";
-        //String sql = "select a,b,c from test3, test2, ( select a , b , e from test1, test2) k";
-        //String sql = "select t1.a ,t2.d from test1 t1,test2 t2";
-        //TODO: join 구문 테이블 리스트 확인해 볼 필요 있음
-        //String sql = "select * from test1 join test2 on test1.a = test2.d";
-        //TODO : 구문 파싱 체크 해야 함
-        //String sql = "select COUNT from (SELECT g, (SELECT COUNT(b) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k)";
-        //String sql = "SELECT g, (SELECT COUNT(*) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k";
-        //String sql = "select cnt from (select count(*) as cnt from test1)"
-        // String sql = "SELECT a, c FROM test1 WHERE b IN (SELECT a FROM test1 WHERE b = 'MA2100')";
-
-        //metatron mdm
-        // test1 : users, test2: workspace , test3: roles
-//        String sql = "select * from users, roles, ( select user_name , ws_pub_type , user_full_name from workspace, users) k"; //pass
-//        String sql = "select * from roles, users"; //pass
-//        String sql = "select user_name,user_full_name,role_name from roles, workspace, ( select user_name , user_full_name , ws_pub_type from users, workspace) k"; //pass
-//        String sql = "select t1.user_name ,t2.ws_pub_type from users t1, workspace t2"; //pass
-//        String sql = "select * from users join workspace on users.id = workspace.id"; //pass
-//        String sql = "SELECT role_name, (SELECT COUNT(*) as cnt FROM users o WHERE o.id=k.id) COUNT FROM roles k"; //pass
-//        String sql = "select cnt from (select count(*) as cnt from users)"; //pass
-//        String sql = "SELECT user_status, user_name FROM users WHERE user_name IN (SELECT user_full_name FROM users WHERE user_full_name = 'MA2100')"; //pass
-
-//               String sql ="SELECT * FROM polaris.context";
-//        String sql ="SELECT * FROM polaris_dev.dashboard";
-//        String sql ="SELECT * FROM polaris.audit";
-//        String sql ="SELECT abc FROM information_schema.CLIENT_STATISTICS"; //fail(없는 테이블)
-//        String sql ="select * from datasources"; //fail (없는 테이블 )
-//        String sql ="SELECT * FROM polaris_dev.mdm_metadata_popularity";
-//        String sql ="SELECT dc_database FROM polaris_dev.dataconnection where id = '0c8633f8-03ed-4790-836f-bc5e93f95f60'";
-//        String sql = "SELECT B.TBL_ID, (A.PARAM_VALUE * 1) as numRows\n" +
-//                "FROM hive.PARTITION_PARAMS AS A, hive.PARTITIONS AS B\n" +
-//                "WHERE A.PARAM_KEY='numRows'\n" +
-//                "  AND A.PART_ID=B.PART_ID\n" +
-//                "order by numRows desc";
-//        String sql= "select a.book_name, a.id, a.type, b.descendant as child, b.edpth from book a\n" +
-//                "join book_tree b\n" +
-//                "on b.book_ancestor = a.id";
-//
-//        String sql="SELECT description as d FROM information_schema.CHARACTER_SETS";
-//
-
-//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
-//                "         a.num_emp / b.total_count \"Employees\", \n" +
-//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
-//                "  FROM   (SELECT deptno, \n" +
-//                "                 Count()  num_emp, \n" +
-//                "                 SUM(sal) sal_sum \n" +
-//                "          FROM   scott.emp \n" +
-//                "          WHERE  city = 'NYC' \n" +
-//                "          GROUP  BY deptno) a, \n" +
-//                "         (SELECT Count()  total_count, \n" +
-//                "                 SUM(sal) total_sal \n" +
-//                "          FROM   scott.emp \n" +
-//                "          WHERE  city = 'NYC') b ";
-
-//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
-//                "         a.num_emp / b.total_count \"Employees\", \n" +
-//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
-//                "  FROM   (SELECT deptno, \n" +
-//                "                 Count()  num_emp, \n" +
-//                "                 SUM(sal) sal_sum \n" +
-//                "          FROM   scott.emp \n" +
-//                "          WHERE  city = 'NYC' \n" +
-//                "          GROUP  BY deptno) a, \n" +
-//                "         (SELECT Count()  total_count, \n" +
-//                "                 SUM(sal) total_sal \n" +
-//                "          FROM   scott.emp \n" +
-//                "          WHERE  city = 'NYC') b ";
-
-//        String sql = "select s.name 학생이름, s.weight 몸무게,\n" +
-//                "\n" +
-//                "     d.dname 학과이름, p.name ||'교수' 교수이름\n" +
-//                "\n" +
-//                "     from student s, department d, professor p\n" +
-//                "\n" +
-//                "     where s.deptno=d.deptno\n" +
-//                "\n" +
-//                "     and s.profno=p.profno(+)\n" +
-//                "\n" +
-//                "     and weight < (select avg(weight)\n" +
-//                "\n" +
-//                "     from student\n" +
-//                "\n" +
-//                "     where deptno=(select deptno\n" +
-//                "\n" +
-//                "     from student\n" +
-//                "\n" +
-//                "     where name='이광훈'))";
-
-//        String sql = "SELECT name, grade, deptno\n" +
-//                "\n" +
-//                "     FROM student\n" +
-//                "\n" +
-//                "     WHERE deptno IN ( SELECT deptno\n" +
-//                "\n" +
-//                "                        FROM department\n" +
-//                "\n" +
-//                "                        WHERE  college = 100)\n";
-
-        String sql = "select b.dept_name, count(*)\n" +
-                "\n" +
-                "     from temp a, tdept b\n" +
-                "\n" +
-                "     where b.dept_code = a.dept_code\n" +
-                "\n" +
-                "     and a.emp_id in (select emp_id from tcom)\n" +
-                "\n" +
-                "     group by b.dept_name\n";
-
-
-        return sql;
-    }
 
     private void printLineagelist(ArrayList <LineageInfo> lineageLists) {
 
@@ -548,30 +444,22 @@ public class GetLineage {
     }
 
     //db에서 불러 오기
-    private ArrayList <String> getMetadataByMDM(String colName, String schemaName, String tableName, SearchType type)
+    private ArrayList <String> getMetadataByMDM(String colName, String schemaName, String tableName, SearchType type, Connection conn)
             throws ClassNotFoundException, SQLException {
+        //TODO : connection 정보 수정
         logger.info("Read Meata Info From MDM");
 
-        Connection conn = null;
         java.sql.Statement stmt = null; //jsqlparser type과 duplicate
         ResultSet rs = null;
 
         ArrayList <String> results = new ArrayList <String>();
-/*
+
         try {
             SQLConfiguration sqlConfiguration = new SQLConfiguration();
-            String url = sqlConfiguration.get("metatron.metastore.url");
-            String userName = sqlConfiguration.get("metatron.metastore.username");
-            String password = sqlConfiguration.get("metatron.metastore.password");
-            String jdbcDriver = sqlConfiguration.get("metatron.metastore.driver");
-
-            //load jdbc class
-            Class.forName(jdbcDriver);
-            conn = DriverManager.getConnection(url, userName, password);
 
             //make query string
             StringBuilder sb = new StringBuilder();
-            ;
+
             sb.append(sqlConfiguration.get("metadata_search_query"));
 
             sb.append(" where ");
@@ -614,30 +502,14 @@ public class GetLineage {
             e.printStackTrace();
         } finally {
             if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlEx) {
-                }
-                rs = null;
+                rs.close();
             }
 
             if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqlEx) {
-                }
-                stmt = null;
-            }
-
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (Exception ex) {
-                }
-                conn = null;
+                stmt.close();
             }
         }
-*/
+
         return results;
 
     }
@@ -691,7 +563,7 @@ public class GetLineage {
     private void searchAllColumnsAndAddLineageList(String schema, String table, String selectAlias, int depth, SelectItem selectItem) {
         //테이블과 db명으로 컬럼 정보를 가지고 옮
         try {
-            ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column);
+            ArrayList <String> cols = getMetadataByMDM(null, schema, table, SearchType.Column,getMDMConnection());
 
             //TODO: 테이블 이름인지 ... 테이블 alias 인지... 아니면 이전 서브 쿼리의 alias 인지 확인해야 함
             if (cols.size() > 0) {
@@ -761,6 +633,29 @@ public class GetLineage {
             }
         }
         return newinfos;
+    }
+
+    private Connection getMDMConnection(){
+
+        try {
+
+            if(conn == null) {
+                SQLConfiguration sqlConfiguration = new SQLConfiguration();
+                String url = sqlConfiguration.get("metatron.metastore.url");
+                String userName = sqlConfiguration.get("metatron.metastore.username");
+                String password = sqlConfiguration.get("metatron.metastore.password");
+                String jdbcDriver = sqlConfiguration.get("metatron.metastore.driver");
+
+                //load jdbc class
+                Class.forName(jdbcDriver);
+                conn = DriverManager.getConnection(url, userName, password);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return conn;
     }
 
     public enum SearchType {

@@ -413,5 +413,121 @@ public class MakeJsonLogSample {
         return queryList;
     }
 
+    public String getSQL() {
+        //String sql = "select * from test3, test2, ( select a , b , e from test1, test2) k";
+        //String sql = "select test3.* from polaris.test3, polrais.test2";
+        //String sql = "select a,b,c from test3, test2, ( select a , b , e from test1, test2) k";
+        //String sql = "select t1.a ,t2.d from test1 t1,test2 t2";
+        //TODO: join 구문 테이블 리스트 확인해 볼 필요 있음
+        //String sql = "select * from test1 join test2 on test1.a = test2.d";
+        //TODO : 구문 파싱 체크 해야 함
+        //String sql = "select COUNT from (SELECT g, (SELECT COUNT(b) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k)";
+        //String sql = "SELECT g, (SELECT COUNT(*) as cnt FROM test1 o WHERE o.a=k.g) COUNT FROM test3 k";
+        //String sql = "select cnt from (select count(*) as cnt from test1)"
+        // String sql = "SELECT a, c FROM test1 WHERE b IN (SELECT a FROM test1 WHERE b = 'MA2100')";
+
+        //metatron mdm
+        // test1 : users, test2: workspace , test3: roles
+//        String sql = "select * from users, roles, ( select user_name , ws_pub_type , user_full_name from workspace, users) k"; //pass
+//        String sql = "select * from roles, users"; //pass
+//        String sql = "select user_name,user_full_name,role_name from roles, workspace, ( select user_name , user_full_name , ws_pub_type from users, workspace) k"; //pass
+//        String sql = "select t1.user_name ,t2.ws_pub_type from users t1, workspace t2"; //pass
+//        String sql = "select * from users join workspace on users.id = workspace.id"; //pass
+//        String sql = "SELECT role_name, (SELECT COUNT(*) as cnt FROM users o WHERE o.id=k.id) COUNT FROM roles k"; //pass
+//        String sql = "select cnt from (select count(*) as cnt from users)"; //pass
+//        String sql = "SELECT user_status, user_name FROM users WHERE user_name IN (SELECT user_full_name FROM users WHERE user_full_name = 'MA2100')"; //pass
+
+//               String sql ="SELECT * FROM polaris.context";
+//        String sql ="SELECT * FROM polaris_dev.dashboard";
+//        String sql ="SELECT * FROM polaris.audit";
+//        String sql ="SELECT abc FROM information_schema.CLIENT_STATISTICS"; //fail(없는 테이블)
+//        String sql ="select * from datasources"; //fail (없는 테이블 )
+//        String sql ="SELECT * FROM polaris_dev.mdm_metadata_popularity";
+//        String sql ="SELECT dc_database FROM polaris_dev.dataconnection where id = '0c8633f8-03ed-4790-836f-bc5e93f95f60'";
+//        String sql = "SELECT B.TBL_ID, (A.PARAM_VALUE * 1) as numRows\n" +
+//                "FROM hive.PARTITION_PARAMS AS A, hive.PARTITIONS AS B\n" +
+//                "WHERE A.PARAM_KEY='numRows'\n" +
+//                "  AND A.PART_ID=B.PART_ID\n" +
+//                "order by numRows desc";
+//        String sql= "select a.book_name, a.id, a.type, b.descendant as child, b.edpth from book a\n" +
+//                "join book_tree b\n" +
+//                "on b.book_ancestor = a.id";
+//
+//        String sql="SELECT description as d FROM information_schema.CHARACTER_SETS";
+//
+
+//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
+//                "         a.num_emp / b.total_count \"Employees\", \n" +
+//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
+//                "  FROM   (SELECT deptno, \n" +
+//                "                 Count()  num_emp, \n" +
+//                "                 SUM(sal) sal_sum \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC' \n" +
+//                "          GROUP  BY deptno) a, \n" +
+//                "         (SELECT Count()  total_count, \n" +
+//                "                 SUM(sal) total_sal \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC') b ";
+
+//        String sql = "  SELECT a.deptno                  \"Department\", \n" +
+//                "         a.num_emp / b.total_count \"Employees\", \n" +
+//                "         a.sal_sum / b.total_sal   \"Salary\" \n" +
+//                "  FROM   (SELECT deptno, \n" +
+//                "                 Count()  num_emp, \n" +
+//                "                 SUM(sal) sal_sum \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC' \n" +
+//                "          GROUP  BY deptno) a, \n" +
+//                "         (SELECT Count()  total_count, \n" +
+//                "                 SUM(sal) total_sal \n" +
+//                "          FROM   scott.emp \n" +
+//                "          WHERE  city = 'NYC') b ";
+
+//        String sql = "select s.name 학생이름, s.weight 몸무게,\n" +
+//                "\n" +
+//                "     d.dname 학과이름, p.name ||'교수' 교수이름\n" +
+//                "\n" +
+//                "     from student s, department d, professor p\n" +
+//                "\n" +
+//                "     where s.deptno=d.deptno\n" +
+//                "\n" +
+//                "     and s.profno=p.profno(+)\n" +
+//                "\n" +
+//                "     and weight < (select avg(weight)\n" +
+//                "\n" +
+//                "     from student\n" +
+//                "\n" +
+//                "     where deptno=(select deptno\n" +
+//                "\n" +
+//                "     from student\n" +
+//                "\n" +
+//                "     where name='이광훈'))";
+
+//        String sql = "SELECT name, grade, deptno\n" +
+//                "\n" +
+//                "     FROM student\n" +
+//                "\n" +
+//                "     WHERE deptno IN ( SELECT deptno\n" +
+//                "\n" +
+//                "                        FROM department\n" +
+//                "\n" +
+//                "                        WHERE  college = 100)\n";
+
+        String sql = "select b.dept_name, count(*)\n" +
+                "\n" +
+                "     from temp a, tdept b\n" +
+                "\n" +
+                "     where b.dept_code = a.dept_code\n" +
+                "\n" +
+                "     and a.emp_id in (select emp_id from tcom)\n" +
+                "\n" +
+                "     group by b.dept_name\n";
+
+
+        return sql;
+    }
+
+
 
 }

@@ -228,6 +228,7 @@ public class QueryPopularity {
                     type = parser.getSqlType(query, statement);
                 }catch(Exception e){
                     e.printStackTrace();
+                    System.out.println("query : " + query);
                 }
 
                 //TODO : lineage list 를 가져오기
@@ -316,7 +317,7 @@ public class QueryPopularity {
                     inStream = new FileInputStream(file);
                     String logs = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
 
-                    Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}", Pattern.DOTALL);//[sfx] query ~ next line 로그
+                    Pattern MY_PATTERN = Pattern.compile("\\[sfx\\](.*?)\\d{4}-\\d{2}-\\d{2}(.*?)\\d{2}:\\d{2}:\\d{2}", Pattern.DOTALL);//[sfx] query ~ next line 로그
                     Matcher matcher = MY_PATTERN.matcher(logs);
 
                     while (matcher.find()) {
