@@ -1,9 +1,10 @@
 package com.metatron;
 
 import com.metatron.popularity.*;
-import com.metatron.sqlstatics.DruidLineageRecordOrcWriter;
 import com.metatron.sqlstatics.QueryParser;
 import com.metatron.util.SQLConfiguration;
+import com.metatron.writer.DruidRecordOrcWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,15 +66,17 @@ public class Main {
 
                 }
 
-                //TODO: write to hive table (DruidLineageRecordOrcWriter)
                 SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
                 String logPathDir = sqlConfiguration.get("log_path");
                 String orcFilePath = sqlConfiguration.get("orcFilePath");
                 boolean overwrite = Boolean.parseBoolean(sqlConfiguration.get("overwrite"));
 
-                DruidLineageRecordOrcWriter druidLineageRecordOrcWriter = new DruidLineageRecordOrcWriter();
-                druidLineageRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath, hdfsSitePath);
+//                DruidLineageRecordOrcWriter druidLineageRecordOrcWriter = new DruidLineageRecordOrcWriter();
+//                druidLineageRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath, hdfsSitePath);
+
+                DruidRecordOrcWriter druidRecordOrcWriter = new DruidRecordOrcWriter();
+                druidRecordOrcWriter.processOrc(logPathDir, analyzeType,orcFilePath, overwrite, coreSitePath, hdfsSitePath);
 
                 System.out.println("complete!!");
 
@@ -95,16 +98,14 @@ public class Main {
                     queryPopularity.getQueryStaticsFromHdfsFile(coreSitePath, hdfsSitePath);
                 }
 
-                //TODO: write to hive table (DruidLineageRecordOrcWriter)
                 SQLConfiguration sqlConfiguration = new SQLConfiguration();
 
                 String logPathDir = sqlConfiguration.get("popularity_log_path");
                 String orcFilePath = sqlConfiguration.get("popularity_orcFilePath");
                 boolean overwrite = Boolean.parseBoolean(sqlConfiguration.get("overwrite"));
 
-                DruidPopularityRecordOrcWriter druidPopularityRecordOrcWriter = new DruidPopularityRecordOrcWriter();
-                druidPopularityRecordOrcWriter.processOrc(logPathDir, orcFilePath, overwrite, coreSitePath, hdfsSitePath);
-
+                DruidRecordOrcWriter druidRecordOrcWriter = new DruidRecordOrcWriter();
+                druidRecordOrcWriter.processOrc(logPathDir, analyzeType,orcFilePath, overwrite, coreSitePath, hdfsSitePath);
 
             } catch (Exception e) {
                 //System.out.println(e);

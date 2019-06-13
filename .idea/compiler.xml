@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="query_statics" target="6" />
+      <module name="query_statics" target="7" />
     </bytecodeTargetLevel>
   </component>
 </project>
